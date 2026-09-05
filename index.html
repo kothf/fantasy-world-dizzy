@@ -555,45 +555,52 @@
       coin: 'A SOLID GOLD COIN'
     };
 
-    function getGroundY(room, x, curY) {
+    function getGroundY(room, x, curY, isFalling = true) {
       if (room === 0) {
+        // Upper brick ledge
         if (x <= 184 && curY <= 100) return 96;
-        if (x >= 60 && x <= 126 && curY <= 154) return 152;
-        if (x >= 134 && x <= 170 && curY <= 158) return 156;
+        // Bunk bed shelves (one-way platforms when falling)
+        if (x >= 60 && x <= 126 && isFalling) {
+          if (curY <= 128) return 124;
+          if (curY <= 156) return 152;
+        }
+        // Table (one-way platform when falling)
+        if (x >= 134 && x <= 170 && curY <= 158 && isFalling) return 156;
         return 176;
       }
       if (room === 1) {
+        // Upper cavern ledge
         if (x <= 150 && curY <= 64) return 60;
-        if (x >= 96 && x < 112 && curY <= 146) return 144;
-        if (x >= 112 && x < 136 && curY <= 154) return 152;
+        // Stepped rocks
+        if (x >= 96 && x < 112) return 144;
+        if (x >= 112 && x < 136) return 152;
         if (x >= 136 && x < 160) return 160;
         return 176;
       }
       if (room === 2) {
-        if (x <= 72 && curY <= 92) return 88;
-        if (x >= 184 && curY <= 92) return 88;
-        if (x >= 88 && x <= 168 && curY <= 112) return 104;
-        if (((x >= 72 && x < 88) || (x > 168 && x <= 184)) && curY <= 128) return 120;
-        if (((x >= 56 && x < 72) || (x > 184 && x <= 200)) && curY <= 144) return 136;
-        if (((x >= 40 && x < 56) || (x > 200 && x <= 216)) && curY <= 160) return 152;
-        return 168;
+        // Overhead balconies (only if already on or above them)
+        if (x <= 72 && curY <= 90) return 88;
+        if (x >= 184 && curY <= 90) return 88;
+        // Grand Symmetrical Staircase
+        if (x >= 88 && x <= 168) return 104; // Center top landing
+        if ((x >= 72 && x < 88) || (x > 168 && x <= 184)) return 120; // Step 3
+        if ((x >= 56 && x < 72) || (x > 184 && x <= 200)) return 136; // Step 2
+        if ((x >= 40 && x < 56) || (x > 200 && x <= 216)) return 152; // Step 1
+        return 168; // Floor at far left / right
       }
       if (room === 3) {
-        if (x <= 48) return 136;
-        if (x > 48 && x <= 172) return 136;
-        if (STATE.gatorTied && x >= 96 && x <= 128) return 136;
-        if (x > 172 && x <= 210) return 144;
-        return 160;
+        if (x <= 48) return 136; // Left grass bank
+        if (x > 48 && x <= 172) return 136; // Bridge across moat
+        if (x > 172 && x <= 210) return 144; // Castle steps 1
+        return 160; // Castle steps 2 / door threshold
       }
       return 176;
     }
 
     function isClimbable(room, x, y) {
-      if (room === 0) {
-        return (x >= 18 && x <= 34 && y >= 96 && y <= 170);
-      }
       if (room === 1) {
-        return (x >= 140 && x <= 154 && y >= 60 && y <= 160);
+        // Cavern ladder connecting rock base to upper ledge
+        return (x >= 140 && x <= 156 && y >= 58 && y <= 164);
       }
       return false;
     }
@@ -651,6 +658,17 @@
       return STATE.inventory[0] === item || STATE.inventory[1] === item;
     }
 
+    function removeItem(item) {
+      if (STATE.inventory[STATE.activeSlot] === item) {
+        STATE.inventory[STATE.activeSlot] = null;
+      } else if (STATE.inventory[0] === item) {
+        STATE.inventory[0] = null;
+      } else if (STATE.inventory[1] === item) {
+        STATE.inventory[1] = null;
+      }
+      updateHud();
+    }
+
     function hasItemOrUsed(item) {
       if (hasItem(item)) return true;
       if (item === 'jug' && STATE.fireExtinguished) return true;
@@ -666,18 +684,18 @@
       const room = STATE.room;
 
       if (room === 0) {
-        if (!hasItemOrUsed('jug') && Math.abs(p.x - 146) < 18 && Math.abs(p.y - 176) < 24) {
+        if (!hasItemOrUsed('jug') && Math.abs(p.x - 142) < 20 && Math.abs(p.y - 176) < 28) {
           tryPickup('jug');
           return;
         }
-        if (!hasItemOrUsed('bread') && Math.abs(p.x - 164) < 18 && Math.abs(p.y - 176) < 24) {
+        if (!hasItemOrUsed('bread') && Math.abs(p.x - 158) < 20 && Math.abs(p.y - 176) < 28) {
           tryPickup('bread');
           return;
         }
       }
 
       if (room === 2) {
-        if (!hasItemOrUsed('rope') && Math.abs(p.x - 128) < 22 && Math.abs(p.y - 104) < 24) {
+        if (!hasItemOrUsed('rope') && Math.abs(p.x - 126) < 22 && Math.abs(p.y - 104) < 20) {
           tryPickup('rope');
           return;
         }
@@ -713,10 +731,9 @@
       // ROOM 0 (Dungeon)
       if (room === 0) {
         if (!STATE.fireExtinguished && p.x < 56 && p.y > 140) {
-          if (curItem === 'jug') {
+          if (curItem === 'jug' || hasItem('jug')) {
             STATE.fireExtinguished = true;
-            STATE.inventory[STATE.activeSlot] = null;
-            updateHud();
+            removeItem('jug');
             sound.steam();
             showDialog("YOU SPLASHED COLD WATER\nONTO THE ROARING FIRE!\n\nTHE FIRE COOLS TO ASHES!\nPASSAGE BEHIND THE\nFIREPLACE IS NOW OPEN!");
             return;
@@ -726,11 +743,10 @@
           }
         }
 
-        if (!STATE.trollBribed && p.x > 165 && p.y > 130) {
-          if (curItem === 'apple') {
+        if (!STATE.trollBribed && p.x >= 145 && p.y > 130) {
+          if (curItem === 'apple' || hasItem('apple')) {
             STATE.trollBribed = true;
-            STATE.inventory[STATE.activeSlot] = null;
-            updateHud();
+            removeItem('apple');
             sound.trollChime();
             showDialog("THE TROLL ACCEPTS THE\nJUICY GREEN APPLE!\n\n'YUMMY! YOU MAY PASS,\nLITTLE EGG!'\nTHE WAY IS CLEAR!");
             return;
@@ -741,10 +757,9 @@
         }
 
         if (!STATE.ratFed && Math.abs(p.x - STATE.ratX) < 30 && p.y <= 104) {
-          if (curItem === 'bread') {
+          if (curItem === 'bread' || hasItem('bread')) {
             STATE.ratFed = true;
-            STATE.inventory[STATE.activeSlot] = null;
-            updateHud();
+            removeItem('bread');
             sound.coin();
             showDialog("THE RAVENOUS RAT SCAMPERS\nOVER, DEVOURS THE BREAD,\nAND SCURRIES AWAY!");
             return;
@@ -765,7 +780,7 @@
 
       // ROOM 2 (Entrance Hall)
       if (room === 2) {
-        if (Math.abs(p.x - 34) < 20 && Math.abs(p.y - 88) < 20) {
+        if (Math.abs(p.x - 34) < 24 && Math.abs(p.y - 88) < 20) {
           STATE.portcullisRaised = !STATE.portcullisRaised;
           sound.lever();
           if (STATE.portcullisRaised) {
@@ -780,10 +795,9 @@
       // ROOM 3 (Moat & Portcullis)
       if (room === 3) {
         if (!STATE.gatorTied && p.x >= 70 && p.x <= 130 && p.y <= 140) {
-          if (curItem === 'rope') {
+          if (curItem === 'rope' || hasItem('rope')) {
             STATE.gatorTied = true;
-            STATE.inventory[STATE.activeSlot] = null;
-            updateHud();
+            removeItem('rope');
             sound.coin();
             showDialog("YOU NIMBLY TIE THE ROPE\nAROUND THE GATOR'S SNOUT!\n\nIT CAN NO LONGER BITE!\nYOU CAN SAFELY USE IT\nAS A STEPPING STONE!");
             return;
@@ -829,72 +843,147 @@
       const p = STATE.player;
       const keys = STATE.keys;
 
+      const moveLeft = keys['KeyA'] || keys['ArrowLeft'] || keys['KeyO'] || keys['btnLeft'];
+      const moveRight = keys['KeyD'] || keys['ArrowRight'] || keys['KeyP'] || keys['btnRight'];
+      const wantJump = keys['KeyW'] || keys['ArrowUp'] || keys['KeyQ'] || keys['btnJump'];
+      const wantDown = keys['KeyS'] || keys['ArrowDown'] || keys['btnDown'];
+
+      // 1. Ladder climbing (Cavern in Room 1)
       if (isClimbable(STATE.room, p.x, p.y)) {
-        if (keys['KeyW'] || keys['ArrowUp'] || keys['KeyQ'] || keys['btnJump']) {
+        if (wantJump) {
           p.isClimbing = true;
+          p.isGrounded = false;
+          p.isRolling = false;
           p.vy = -1.2;
           p.y += p.vy;
-          return;
-        } else if (keys['KeyS'] || keys['ArrowDown'] || keys['KeyA'] || keys['btnDown']) {
+        } else if (wantDown) {
           p.isClimbing = true;
+          p.isGrounded = false;
+          p.isRolling = false;
           p.vy = 1.2;
           p.y += p.vy;
-          return;
         } else if (p.isClimbing) {
           p.vy = 0;
-          return;
         }
+
+        // Horizontal stepping off the ladder
+        if (moveLeft && !moveRight) {
+          p.x -= 1.2;
+          p.facing = -1;
+          if (p.x < 140) p.isClimbing = false;
+        } else if (moveRight && !moveLeft) {
+          p.x += 1.2;
+          p.facing = 1;
+          if (p.x > 156) p.isClimbing = false;
+        }
+
+        if (p.isClimbing) return;
       } else {
         p.isClimbing = false;
       }
 
-      const moveLeft = keys['KeyA'] || keys['ArrowLeft'] || keys['KeyO'] || keys['btnLeft'];
-      const moveRight = keys['KeyD'] || keys['ArrowRight'] || keys['KeyP'] || keys['btnRight'];
-
-      if (moveLeft && !moveRight) {
-        p.vx = -1.6;
-        p.facing = -1;
-        p.walkTimer++;
-        if (p.walkTimer > 4) {
-          p.walkFrame = (p.walkFrame + 1) % 4;
-          p.walkTimer = 0;
+      // 2. Ground horizontal movement & walking animation
+      if (p.isGrounded) {
+        if (moveLeft && !moveRight) {
+          p.vx = -1.5;
+          p.facing = -1;
+          p.walkTimer++;
+          if (p.walkTimer > 4) {
+            p.walkFrame = (p.walkFrame + 1) % 4;
+            p.walkTimer = 0;
+          }
+        } else if (moveRight && !moveLeft) {
+          p.vx = 1.5;
+          p.facing = 1;
+          p.walkTimer++;
+          if (p.walkTimer > 4) {
+            p.walkFrame = (p.walkFrame + 1) % 4;
+            p.walkTimer = 0;
+          }
+        } else {
+          p.vx = 0;
+          p.walkFrame = 0;
         }
-      } else if (moveRight && !moveLeft) {
-        p.vx = 1.6;
-        p.facing = 1;
-        p.walkTimer++;
-        if (p.walkTimer > 4) {
-          p.walkFrame = (p.walkFrame + 1) % 4;
-          p.walkTimer = 0;
+
+        // 3. Jump Initiation
+        if (wantJump && !p.isJumping) {
+          p.isJumping = true;
+          p.isGrounded = false;
+          p.vy = -4.5;
+          sound.jump();
+          if (p.vx !== 0) {
+            p.isRolling = true;
+            p.rollAngle = 0;
+            p.vx = p.facing * 1.6;
+          } else {
+            p.isRolling = false;
+            p.rollAngle = 0;
+          }
         }
       } else {
-        p.vx = 0;
-        p.walkFrame = 0;
+        // In Mid-Air
+        if (p.isRolling) {
+          p.rollAngle += 0.24;
+          // Maintain horizontal rolling leap momentum with slight air steer
+          if (moveLeft && p.facing === 1) p.vx = Math.max(0.5, p.vx - 0.05);
+          if (moveRight && p.facing === -1) p.vx = Math.min(-0.5, p.vx + 0.05);
+        } else {
+          // Stationary vertical hop: allow steering
+          if (moveLeft && !moveRight) { p.vx = -1.2; p.facing = -1; }
+          else if (moveRight && !moveLeft) { p.vx = 1.2; p.facing = 1; }
+          else { p.vx = 0; }
+        }
       }
 
-      const wantJump = keys['KeyW'] || keys['ArrowUp'] || keys['KeyQ'] || keys['btnJump'];
-      if (wantJump && p.isGrounded && !p.isJumping) {
-        p.isJumping = true;
-        p.isGrounded = false;
-        p.vy = -4.6;
-        p.isRolling = true;
-        p.rollAngle = 0;
-        sound.jump();
+      // 4. Gravity
+      if (!p.isGrounded) {
+        p.vy += 0.28;
+        if (p.vy > 5) p.vy = 5;
       }
 
-      p.vy += 0.28;
-      if (p.vy > 5) p.vy = 5;
-
-      p.x += p.vx;
+      const nextX = p.x + p.vx;
+      const oldY = p.y;
       p.y += p.vy;
+      p.x = nextX;
 
-      if (p.isRolling) {
-        p.rollAngle += p.facing * 0.22;
+      // 5. Obstacle & Wall Collisions
+      // Room 0: Troll blocks walking if not bribed
+      if (STATE.room === 0 && !STATE.trollBribed) {
+        if (p.x >= 165 && p.y >= 130) {
+          p.x = 165;
+          p.vx = 0;
+        }
       }
 
-      const gy = getGroundY(STATE.room, p.x, p.y);
-      if (p.y >= gy) {
-        p.y = gy;
+      // Room 0: Solid brick ceiling bump (above cell x <= 184)
+      if (STATE.room === 0 && p.vy < 0 && p.x <= 184) {
+        if (p.y - 20 <= 112 && oldY - 20 > 110) {
+          p.y = 132;
+          p.vy = 0.5; // Bumps head and falls
+        }
+      }
+
+      // Room 3: Closed Portcullis blocks walking
+      if (STATE.room === 3 && !STATE.portcullisRaised) {
+        if (p.x <= 175) {
+          p.x = 175;
+          p.vx = 0;
+        }
+      }
+
+      // 6. Ground & Stair Collision
+      const isFalling = p.vy >= 0;
+      const targetGround = getGroundY(STATE.room, p.x, p.y, isFalling);
+
+      // Smooth step climbing on stairs (Room 2) and rocks (Room 1)
+      if (p.isGrounded && (STATE.room === 1 || STATE.room === 2)) {
+        if (Math.abs(targetGround - p.y) <= 18) {
+          p.y = targetGround;
+        }
+      }
+
+      if (isFalling && p.y >= targetGround && oldY <= targetGround + 4) {
+        p.y = targetGround;
         p.vy = 0;
         if (!p.isGrounded) {
           sound.land();
@@ -903,64 +992,87 @@
           p.isRolling = false;
           p.rollAngle = 0;
         }
-      } else {
+      } else if (p.y < targetGround) {
         p.isGrounded = false;
       }
 
-      // Room Transitions
-      if (p.x < 10) {
+      // Clamp inside screen horizontally
+      p.x = Math.max(8, Math.min(248, p.x));
+
+      // 7. Room Transitions
+      if (p.x <= 10) {
         if (STATE.room === 0) {
           if (STATE.fireExtinguished) {
             STATE.room = 1;
-            p.x = 236;
+            p.x = 232;
             p.y = 176;
+            p.vx = 0;
           } else {
             p.x = 10;
           }
         } else if (STATE.room === 2) {
+          // Return to Dungeon
           STATE.room = 0;
-          p.x = 220;
+          p.x = 224;
           p.y = 176;
+          p.vx = 0;
         } else if (STATE.room === 3) {
-          if (p.x <= 14 && STATE.coins >= 5) {
+          // Freedom exit
+          if (STATE.coins >= 5) {
             triggerVictory();
+          } else {
+            showSpeech('NEED ALL 5 COINS!\n(' + STATE.coins + '/5 COLLECTED)');
+            p.x = 14;
           }
         }
       }
 
-      if (p.x > 238) {
+      if (p.x >= 238) {
         if (STATE.room === 0) {
           if (STATE.trollBribed) {
             STATE.room = 2;
             p.x = 18;
             p.y = 168;
+            p.vx = 0;
           } else {
             p.x = 238;
           }
         } else if (STATE.room === 1) {
+          // Return to Dungeon through fireplace
           STATE.room = 0;
-          p.x = 16;
+          p.x = 24;
           p.y = 176;
+          p.vx = 0;
         } else if (STATE.room === 2) {
+          // Enter Moat from Castle
           STATE.room = 3;
-          p.x = 220;
+          p.x = 224;
           p.y = 160;
+          p.vx = 0;
         } else if (STATE.room === 3) {
-          p.x = 238;
+          // Return to Castle from Moat
+          STATE.room = 2;
+          p.x = 224;
+          p.y = 168;
+          p.vx = 0;
         }
       }
 
-      // Hazards
-      if (STATE.room === 0 && !STATE.fireExtinguished && p.x <= 36 && p.y >= 168) {
+      // 8. Hazards
+      // Room 0: Roaring flames
+      if (STATE.room === 0 && !STATE.fireExtinguished && p.x <= 36 && p.y >= 160) {
         killPlayer("YOU WERE BURNT\nBY THE ROARING FLAMES!");
       }
-      if (STATE.room === 1 && p.x <= 96 && p.y >= 168) {
+      // Room 1: Deep water
+      if (STATE.room === 1 && p.x <= 96 && p.y >= 164) {
         killPlayer("YOU FELL IN THE WATER\nAND DROWNED!");
       }
-      if (STATE.room === 3 && p.x >= 48 && p.x <= 165 && p.y >= 150) {
+      // Room 3: Moat water
+      if (STATE.room === 3 && p.x >= 48 && p.x <= 168 && p.y >= 148) {
         killPlayer("YOU FELL IN THE MOAT\nAND DROWNED!");
       }
-      if (STATE.room === 3 && !STATE.gatorTied && p.x >= 96 && p.x <= 128 && p.y >= 134) {
+      // Room 3: Snap-happy alligator
+      if (STATE.room === 3 && !STATE.gatorTied && p.x >= 92 && p.x <= 126 && p.y <= 140) {
         killPlayer("THE GATOR HAS YOU\nFOR LUNCH!");
       }
 
@@ -975,11 +1087,27 @@
         if (STATE.lives <= 0) {
           showDialog("GAME OVER!\nDIZZY HAS LOST ALL LIVES.\n\nPRESS [R] TO RESTART\nTHE ADVENTURE.");
         } else {
-          STATE.player.x = 90;
-          STATE.player.y = 176;
+          // Safe respawn in current room
+          if (STATE.room === 0) {
+            STATE.player.x = 90;
+            STATE.player.y = 176;
+          } else if (STATE.room === 1) {
+            STATE.player.x = 220;
+            STATE.player.y = 176;
+          } else if (STATE.room === 2) {
+            STATE.player.x = 128;
+            STATE.player.y = 104;
+          } else if (STATE.room === 3) {
+            STATE.player.x = 224;
+            STATE.player.y = 160;
+          }
           STATE.player.vx = 0;
           STATE.player.vy = 0;
           STATE.player.isRolling = false;
+          STATE.player.isJumping = false;
+          STATE.player.isGrounded = true;
+          STATE.player.rollAngle = 0;
+          updateHud();
         }
       });
     }
@@ -1010,7 +1138,10 @@
       STATE.player.vx = 0;
       STATE.player.vy = 0;
       STATE.player.facing = 1;
+      STATE.player.isGrounded = true;
+      STATE.player.isJumping = false;
       STATE.player.isRolling = false;
+      STATE.player.rollAngle = 0;
       updateHud();
       showSpeech("GOSH! I'M TRAPPED\nIN THE CASTLE DUNGEON!");
     }
@@ -1099,10 +1230,13 @@
 
       // ROOM 3 (Moat & Portcullis)
       if (STATE.room === 3) {
-        if (!STATE.portcullisRaised) {
+        if (STATE.portcullisRaised) {
+          ctx.fillStyle = '#000000';
+          ctx.fillRect(172, 96, 8, 48);
+        } else {
           ctx.fillStyle = '#ffffff';
           for (let x = 173; x <= 181; x += 2) {
-            ctx.fillRect(x, 90, 1, 54);
+            ctx.fillRect(x, 96, 1, 48);
           }
         }
 
@@ -1133,23 +1267,26 @@
     function renderPlayer() {
       const p = STATE.player;
       ctx.save();
-      ctx.translate(Math.round(p.x), Math.round(p.y));
+      // Center pivot at egg center (10px above boots)
+      ctx.translate(Math.round(p.x), Math.round(p.y - 10));
+
+      if (p.facing < 0) {
+        ctx.scale(-1, 1);
+      }
 
       if (p.isRolling) {
         ctx.rotate(p.rollAngle);
       }
 
-      if (p.facing < 0 && !p.isRolling) {
-        ctx.scale(-1, 1);
-      }
-
       let pImg = IMAGES['dizzy_idle'];
-      if (p.vx !== 0 && p.isGrounded) {
+      if (p.isClimbing) {
+        pImg = IMAGES['dizzy_idle'];
+      } else if (p.vx !== 0 && p.isGrounded) {
         pImg = IMAGES['dizzy_walk_' + p.walkFrame] || IMAGES['dizzy_idle'];
       }
 
       if (pImg && pImg.complete) {
-        ctx.drawImage(pImg, -12, -20);
+        ctx.drawImage(pImg, -12, -10);
       }
 
       ctx.restore();
@@ -1167,6 +1304,19 @@
       // 2. Draw Coin Counter in Right Recess (x=168..208, y=14..24)
       const coinStr = '0' + Math.min(9, STATE.coins);
       drawZxText(ctx, coinStr, 180, 15, '#ffff00');
+
+      // 3. Dynamic Room Title on Stone Header Banner (x=36..220, y=32..42)
+      ctx.fillStyle = '#000000';
+      ctx.fillRect(36, 26, 184, 14);
+      const ROOM_TITLES = [
+        "THE CASTLE'S DUNGEON",
+        "BEHIND THE FIREPLACE",
+        "THE ENTRANCE HALL",
+        "THE CASTLE MOAT"
+      ];
+      const title = ROOM_TITLES[STATE.room] || '';
+      const tx = 128 - Math.round((title.length * 8) / 2);
+      drawZxText(ctx, title, tx, 29, '#ffff00');
     }
 
     function renderSpeechBubble() {
@@ -1223,7 +1373,6 @@
         drawZxText(ctx, prompt, px, boxY + boxH - 11, '#00ffff');
       }
     }
-
     // --- 9. GAME LOOP ---
     function gameLoop() {
       updatePlayer();
