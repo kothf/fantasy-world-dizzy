@@ -1,0 +1,2270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Fantasy World Dizzy (1989) - Sinclair ZX Spectrum 48K Classic</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #0a0a10;
+      background-image: 
+        radial-gradient(circle at 50% 30%, #18182a 0%, #06060a 100%),
+        repeating-linear-gradient(0deg, rgba(0,0,0,0.2) 0px, rgba(0,0,0,0.2) 2px, transparent 2px, transparent 4px);
+      color: #d7d7d7;
+      font-family: 'Courier New', Courier, monospace;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 10px;
+      overflow-x: hidden;
+    }
+
+    /* Sinclair ZX Spectrum 48K Bezel */
+    .spectrum-casing {
+      background: #16161e;
+      border: 4px solid #2a2a38;
+      border-radius: 12px;
+      box-shadow: 
+        0 0 40px rgba(0, 0, 0, 0.98),
+        inset 0 1px 2px rgba(255, 255, 255, 0.12);
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 1060px;
+      width: 100%;
+      margin: auto;
+    }
+
+    /* Header & Sinclair Rainbow Stripe */
+    .spectrum-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 8px;
+      padding: 0 4px;
+    }
+
+    .brand-title {
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      color: #ffffff;
+      text-transform: uppercase;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+    }
+
+    .brand-sub {
+      color: #00d7d7;
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    .rainbow-stripe {
+      display: flex;
+      height: 6px;
+      width: 80px;
+      border-radius: 2px;
+      overflow: hidden;
+      box-shadow: 0 0 6px rgba(255,255,255,0.2);
+    }
+    .rb-red { background: #ff0000; flex: 1; }
+    .rb-yellow { background: #ffff00; flex: 1; }
+    .rb-green { background: #00ff00; flex: 1; }
+    .rb-cyan { background: #00ffff; flex: 1; }
+
+    /* Canvas CRT Frame */
+    .crt-screen-frame {
+      position: relative;
+      background: #000000;
+      border: 8px solid #d7d7d7; /* Spectrum border color */
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 
+        0 0 25px rgba(0, 0, 0, 0.95),
+        inset 0 0 20px rgba(0, 0, 0, 0.85);
+      width: 100%;
+      max-width: 1024px;
+      aspect-ratio: 4 / 3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.2s;
+    }
+
+    canvas#gameCanvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      aspect-ratio: 4 / 3;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: -webkit-crisp-edges;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+
+    /* CRT Scanlines */
+    .scanlines-overlay {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+      background-size: 100% 3px, 3px 100%;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* Keyboard / Info Legend */
+    .controls-panel {
+      margin-top: 10px;
+      width: 100%;
+      background: #111116;
+      border: 1px solid #242432;
+      border-radius: 6px;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .key-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 11px;
+    }
+
+    .key-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #191924;
+      border: 1px solid #363648;
+      border-radius: 4px;
+      padding: 2px 6px;
+      color: #ffffff;
+    }
+
+    .key-badge kbd {
+      background: #272738;
+      border: 1px solid #50506c;
+      border-radius: 3px;
+      padding: 1px 5px;
+      font-weight: bold;
+      color: #ffff00;
+      font-family: monospace;
+    }
+
+    /* On-Screen Touch Controls (Mobile Friendly) */
+    .touch-controls {
+      display: none;
+      width: 100%;
+      margin-top: 8px;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    @media (max-width: 820px) {
+      .touch-controls {
+        display: grid;
+      }
+    }
+
+    .dpad-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+    }
+
+    .action-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 4px;
+    }
+
+    .btn-touch {
+      background: #222232;
+      border: 1px solid #3e3e58;
+      border-radius: 6px;
+      color: #ffffff;
+      font-family: inherit;
+      font-weight: bold;
+      font-size: 13px;
+      padding: 12px 4px;
+      text-align: center;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-touch:active {
+      background: #383854;
+      transform: translateY(1px);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="spectrum-casing">
+    <!-- Sinclair ZX Spectrum Header -->
+    <header class="spectrum-header">
+      <div>
+        <span class="brand-title">Sinclair ZX Spectrum 48K</span>
+        <span class="brand-sub"> | Fantasy World Dizzy (1989)</span>
+      </div>
+      <div class="rainbow-stripe">
+        <div class="rb-red"></div>
+        <div class="rb-yellow"></div>
+        <div class="rb-green"></div>
+        <div class="rb-cyan"></div>
+      </div>
+    </header>
+
+    <!-- Canvas Screen Area with Authentic Spectrum Border -->
+    <div id="crtFrame" class="crt-screen-frame">
+      <canvas id="gameCanvas" width="256" height="192"></canvas>
+      <div class="scanlines-overlay"></div>
+    </div>
+
+    <!-- Controls / Guide Bar -->
+    <footer class="controls-panel">
+      <div class="key-row">
+        <div class="key-badge"><kbd>A</kbd> / <kbd>D</kbd> or <kbd>◀</kbd><kbd>▶</kbd> Walk</div>
+        <div class="key-badge"><kbd>W</kbd> / <kbd>SPACE</kbd> Somersault Jump / Climb</div>
+        <div class="key-badge"><kbd>S</kbd> / <kbd>▼</kbd> Climb Down / Pick Up</div>
+        <div class="key-badge"><kbd>P</kbd> Pick Up / Drop</div>
+        <div class="key-badge"><kbd>U</kbd> / <kbd>ENTER</kbd> Action / Use / Talk</div>
+        <div class="key-badge"><kbd>1</kbd> / <kbd>2</kbd> Select Item Slot</div>
+        <div class="key-badge"><kbd>M</kbd> Mute Audio</div>
+        <div class="key-badge"><kbd>R</kbd> Restart</div>
+      </div>
+    </footer>
+
+    <!-- Mobile Touch Controls -->
+    <div class="touch-controls">
+      <div class="dpad-grid">
+        <div></div>
+        <button id="btnTouchJump" class="btn-touch">▲ JUMP</button>
+        <div></div>
+        <button id="btnTouchLeft" class="btn-touch">◀ WALK</button>
+        <button id="btnTouchDown" class="btn-touch">▼ DOWN</button>
+        <button id="btnTouchRight" class="btn-touch">WALK ▶</button>
+      </div>
+      <div class="action-grid">
+        <button id="btnTouchUse" class="btn-touch" style="background: #1b3838; border-color: #00d7d7; color: #00ffff;">[U] USE / TALK</button>
+        <button id="btnTouchPick" class="btn-touch" style="background: #38381b; border-color: #d7d700; color: #ffff00;">[P] PICK / DROP</button>
+        <button id="btnTouchSlot" class="btn-touch">[1/2] SWAP SLOT</button>
+        <button id="btnTouchRestart" class="btn-touch">🔄 RESTART</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /**
+     * FANTASY WORLD DIZZY (ZX Spectrum 1989 Recreation)
+     * Full self-contained 1-bit engine with zero external dependencies.
+     */
+
+    // --- 1. SINCLAIR ZX SPECTRUM 15-COLOR PALETTE ---
+    const ZX = {
+      BLACK:         '#000000',
+      BLUE:          '#0000D7',
+      RED:           '#D70000',
+      MAGENTA:       '#D700D7',
+      GREEN:         '#00D700',
+      CYAN:          '#00D7D7',
+      YELLOW:        '#D7D700',
+      WHITE:         '#D7D7D7',
+      // Bright variants
+      BRIGHT_BLACK:  '#000000',
+      BRIGHT_BLUE:   '#0000FF',
+      BRIGHT_RED:    '#FF0000',
+      BRIGHT_MAGENTA:'#FF00FF',
+      BRIGHT_GREEN:  '#00FF00',
+      BRIGHT_CYAN:   '#00FFFF',
+      BRIGHT_YELLOW: '#FFFF00',
+      BRIGHT_WHITE:  '#FFFFFF'
+    };
+
+    // --- 2. COMPLETE SINCLAIR ZX SPECTRUM 8x8 BITMAP FONT ---
+    const FONT_HEX = {
+      ' ': "0000000000000000", '!': "1010101010001000", '"': "2828280000000000",
+      '#': "28287c287c282800", '$': "103c503814781000", '%': "60640810204c0600",
+      '&': "2050502054483400", "'": "1010200000000000", '(': "0810202020100800",
+      ')': "2010080808102000", '*': "0028107c10280000", '+': "0010107c10100000",
+      ',': "0000000000101020", '-': "0000007c00000000", '.': "0000000000303000",
+      '/': "0204081020408000", '0': "38444c5464443800", '1': "1030101010103800",
+      '2': "3844040810207c00", '3': "3844041804443800", '4': "081828487c080800",
+      '5': "7c40780404443800", '6': "1820407844443800", '7': "7c04081020202000",
+      '8': "3844443844443800", '9': "3844443c04083000", ':': "0030300030300000",
+      ';': "0030300030102000", '<': "0810204020100800", '=': "00007c007c000000",
+      '>': "2010080408102000", '?': "3844040810001000", '@': "3844045c54543800",
+      'A': "3844447c44444400", 'B': "7844447844447800", 'C': "3844404040443800",
+      'D': "7048444444487000", 'E': "7c40407840407c00", 'F': "7c40407840404000",
+      'G': "3844404c44443800", 'H': "4444447c44444400", 'I': "3810101010103800",
+      'J': "0c04040404443800", 'K': "4448506050484400", 'L': "4040404040407c00",
+      'M': "446c544444444400", 'N': "4464544c44444400", 'O': "3844444444443800",
+      'P': "7844447840404000", 'Q': "3844444454483400", 'R': "7844447850484400",
+      'S': "3844403804443800", 'T': "7c10101010101000", 'U': "4444444444443800",
+      'V': "4444444428281000", 'W': "44444454546c4400", 'X': "4444281028444400",
+      'Y': "4444281010101000", 'Z': "7c04081020407c00", '[': "3820202020203800",
+      '\\':"8040201008040200", ']': "3808080808083800", '^': "1028440000000000",
+      '_': "0000000000007c00", '`': "2010000000000000", 'a': "000038043c443c00",
+      'b': "4040784444447800", 'c': "0000384440443800", 'd': "04043c4444443c00",
+      'e': "000038447c403c00", 'f': "0c103c1010101000", 'g': "00003c44443c0438",
+      'h': "4040784444444400", 'i': "1000301010103800", 'j': "04000c0404044438",
+      'k': "4040485060504800", 'l': "3010101010103800", 'm': "0000745454444400",
+      'n': "0000784444444400", 'o': "0000384444443800", 'p': "0000784444784040",
+      'q': "00003c44443c0406", 'r': "0000586040404000", 's': "0000384038047800",
+      't': "10103c1010140800", 'u': "00004444444c3400", 'v': "0000444428281000",
+      'w': "0000444454542800", 'x': "0000442810284400", 'y': "000044444c340438",
+      'z': "00007c0810207c00", '{': "0c10102010100c00", '|': "1010101010101010",
+      '}': "3008080408083000", '~': "324c000000000000"
+    };
+
+    const FONT_BITS = {};
+    for (const char in FONT_HEX) {
+      const hex = FONT_HEX[char];
+      const rows = [];
+      for (let r = 0; r < 8; r++) {
+        rows.push(parseInt(hex.substr(r * 2, 2), 16));
+      }
+      FONT_BITS[char] = rows;
+    }
+
+    function drawChar(ctx, char, x, y, color) {
+      const rows = FONT_BITS[char] || FONT_BITS['?'];
+      ctx.fillStyle = color;
+      for (let r = 0; r < 8; r++) {
+        const byte = rows[r];
+        for (let c = 0; c < 8; c++) {
+          if ((byte >> (7 - c)) & 1) {
+            ctx.fillRect(x + c, y + r, 1, 1);
+          }
+        }
+      }
+    }
+
+    function drawText(ctx, str, x, y, color = ZX.BRIGHT_WHITE) {
+      for (let i = 0; i < str.length; i++) {
+        drawChar(ctx, str[i], x + i * 8, y, color);
+      }
+    }
+
+    // --- 3. 1-BIT WEB AUDIO BEEPER SYNTHESIZER ---
+    class BeeperAudio {
+      constructor() {
+        this.ctx = null;
+        this.muted = false;
+        this.masterGain = null;
+      }
+
+      init() {
+        if (this.ctx) return;
+        try {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+          this.masterGain = this.ctx.createGain();
+          this.masterGain.gain.setValueAtTime(0.22, this.ctx.currentTime);
+          this.masterGain.connect(this.ctx.destination);
+        } catch (e) {
+          console.warn("Web Audio not supported:", e);
+        }
+      }
+
+      ensure() {
+        if (!this.ctx) this.init();
+        if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+      }
+
+      toggleMute() {
+        this.muted = !this.muted;
+        if (this.masterGain && this.ctx) {
+          this.masterGain.gain.setValueAtTime(this.muted ? 0 : 0.22, this.ctx.currentTime);
+        }
+        return this.muted;
+      }
+
+      // Classic Jump chirp (Frequency sweep up)
+      playJump() {
+        if (this.muted) return;
+        this.ensure();
+        if (!this.ctx) return;
+        const t = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(440, t);
+        osc.frequency.exponentialRampToValueAtTime(1400, t + 0.08);
+        g.gain.setValueAtTime(0.2, t);
+        g.gain.exponentialRampToValueAtTime(0.01, t + 0.08);
+        osc.connect(g);
+        g.connect(this.masterGain);
+        osc.start(t);
+        osc.stop(t + 0.08);
+      }
+
+      // Landing click
+      playLand() {
+        if (this.muted) return;
+        this.ensure();
+        if (!this.ctx) return;
+        const t = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(120, t);
+        osc.frequency.exponentialRampToValueAtTime(40, t + 0.025);
+        g.gain.setValueAtTime(0.3, t);
+        g.gain.exponentialRampToValueAtTime(0.01, t + 0.025);
+        osc.connect(g);
+        g.connect(this.masterGain);
+        osc.start(t);
+        osc.stop(t + 0.025);
+      }
+
+      // Oliver Twins 3-note chime (Item pickup / Action)
+      playChime() {
+        if (this.muted) return;
+        this.ensure();
+        if (!this.ctx) return;
+        const notes = [659.25, 830.61, 987.77]; // E5, G#5, B5
+        notes.forEach((freq, idx) => {
+          const t = this.ctx.currentTime + idx * 0.06;
+          const osc = this.ctx.createOscillator();
+          const g = this.ctx.createGain();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(freq, t);
+          g.gain.setValueAtTime(0.25, t);
+          g.gain.exponentialRampToValueAtTime(0.01, t + 0.055);
+          osc.connect(g);
+          g.connect(this.masterGain);
+          osc.start(t);
+          osc.stop(t + 0.055);
+        });
+      }
+
+      // Sparkling Gold Coin Ping
+      playCoin() {
+        if (this.muted) return;
+        this.ensure();
+        if (!this.ctx) return;
+        const notes = [1318.5, 2093.0]; // E6, C7
+        notes.forEach((freq, idx) => {
+          const t = this.ctx.currentTime + idx * 0.045;
+          const osc = this.ctx.createOscillator();
+          const g = this.ctx.createGain();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(freq, t);
+          g.gain.setValueAtTime(0.25, t);
+          g.gain.exponentialRampToValueAtTime(0.01, t + 0.09);
+          osc.connect(g);
+          g.connect(this.masterGain);
+          osc.start(t);
+          osc.stop(t + 0.09);
+        });
+      }
+
+      // Tragic falling / drowning / death descending buzz
+      playDeath() {
+        if (this.muted) return;
+        this.ensure();
+        if (!this.ctx) return;
+        const t = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(480, t);
+        osc.frequency.exponentialRampToValueAtTime(50, t + 0.85);
+        g.gain.setValueAtTime(0.35, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.85);
+        osc.connect(g);
+        g.connect(this.masterGain);
+        osc.start(t);
+        osc.stop(t + 0.85);
+      }
+
+      // Sizzling water steam hiss
+      playHiss() {
+        if (this.muted) return;
+        this.ensure();
+        if (!this.ctx) return;
+        const bufferSize = Math.floor(this.ctx.sampleRate * 0.6);
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = Math.random() * 2 - 1;
+        }
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(1200, this.ctx.currentTime);
+        filter.frequency.exponentialRampToValueAtTime(300, this.ctx.currentTime + 0.6);
+        const g = this.ctx.createGain();
+        g.gain.setValueAtTime(0.3, this.ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.6);
+        noise.connect(filter);
+        filter.connect(g);
+        g.connect(this.masterGain);
+        noise.start();
+        noise.stop(this.ctx.currentTime + 0.6);
+      }
+
+      // Mechanical portcullis clank / lever ratchet
+      playLever() {
+        if (this.muted) return;
+        this.ensure();
+        if (!this.ctx) return;
+        for (let i = 0; i < 4; i++) {
+          const t = this.ctx.currentTime + i * 0.05;
+          const osc = this.ctx.createOscillator();
+          const g = this.ctx.createGain();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(180 - i * 20, t);
+          g.gain.setValueAtTime(0.25, t);
+          g.gain.exponentialRampToValueAtTime(0.01, t + 0.035);
+          osc.connect(g);
+          g.connect(this.masterGain);
+          osc.start(t);
+          osc.stop(t + 0.035);
+        }
+      }
+
+      // Dialog typewriter character blip
+      playBlip() {
+        if (this.muted) return;
+        this.ensure();
+        if (!this.ctx) return;
+        const t = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(950, t);
+        g.gain.setValueAtTime(0.12, t);
+        g.gain.exponentialRampToValueAtTime(0.01, t + 0.015);
+        osc.connect(g);
+        g.connect(this.masterGain);
+        osc.start(t);
+        osc.stop(t + 0.015);
+      }
+
+      // Rat squeak bite
+      playBite() {
+        if (this.muted) return;
+        this.ensure();
+        if (!this.ctx) return;
+        const t = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(800, t);
+        osc.frequency.linearRampToValueAtTime(1200, t + 0.04);
+        osc.frequency.exponentialRampToValueAtTime(400, t + 0.1);
+        g.gain.setValueAtTime(0.25, t);
+        g.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
+        osc.connect(g);
+        g.connect(this.masterGain);
+        osc.start(t);
+        osc.stop(t + 0.1);
+      }
+
+      // Grand Victory Fanfare
+      playVictory() {
+        if (this.muted) return;
+        this.ensure();
+        if (!this.ctx) return;
+        const melody = [
+          { f: 523.25, d: 0.12 }, // C5
+          { f: 659.25, d: 0.12 }, // E5
+          { f: 783.99, d: 0.12 }, // G5
+          { f: 1046.50, d: 0.28 }, // C6
+          { f: 783.99, d: 0.12 }, // G5
+          { f: 1046.50, d: 0.50 }  // C6
+        ];
+        let cur = this.ctx.currentTime;
+        melody.forEach(n => {
+          const osc = this.ctx.createOscillator();
+          const g = this.ctx.createGain();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(n.f, cur);
+          g.gain.setValueAtTime(0.28, cur);
+          g.gain.exponentialRampToValueAtTime(0.01, cur + n.d - 0.02);
+          osc.connect(g);
+          g.connect(this.masterGain);
+          osc.start(cur);
+          osc.stop(cur + n.d);
+          cur += n.d;
+        });
+      }
+    }
+
+    const sound = new BeeperAudio();
+
+    // --- 4. GAME STATE & MAP DATA ---
+    const STATE = {
+      player: {
+        x: 65,
+        y: 106,
+        vx: 0,
+        vy: 0,
+        width: 14,
+        height: 20,
+        facing: 1, // 1: right, -1: left
+        onGround: false,
+        isJumping: false,
+        isRolling: false,
+        isClimbing: false,
+        rollAngle: 0,
+        rollTimer: 0,
+        walkFrame: 0,
+        walkTicks: 0,
+        fallDistance: 0,
+        energy: 100,
+        lives: 3,
+        inventory: ["A Fresh Green Apple", null],
+        activeSlot: 0,
+        isHurt: false,
+        hurtTimer: 0,
+        isDead: false,
+        deathTimer: 0
+      },
+      currentRoom: 0, // 0: Dungeon, 1: Behind Fireplace, 2: Entrance Hall, 3: Castle Moat
+      coinsFound: 0,
+      coins: [
+        { id: 1, room: 0, x: 96, y: 56, collected: false }, // On chain above barrel
+        { id: 2, room: 1, x: 48, y: 56, collected: false }, // On high secret cavern ledge
+        { id: 3, room: 2, x: 160, y: 72, collected: false, hiddenInRailing: true }, // Behind loose railing
+        { id: 4, room: 2, x: 144, y: 32, collected: false }, // High arch crest
+        { id: 5, room: 3, x: 136, y: 84, collected: false }  // Above moat / alligator
+      ],
+      groundItems: [
+        { name: "A Jug of Cold Water", room: 0, x: 50, y: 120 },
+        { name: "A Stale Loaf of Bread", room: 0, x: 136, y: 120 },
+        { name: "A Heavy Boulder", room: 1, x: 152, y: 112 },
+        { name: "A Piece of Rope", room: 2, x: 184, y: 120 }
+      ],
+      puzzles: {
+        trollBribed: false,
+        trollX: 216,
+        trollFacing: -1,
+        trollWalkingOff: false,
+        fireLit: true,
+        ratFed: false,
+        ratX: 110,
+        ratDir: 1,
+        ratEating: false,
+        ratEatTimer: 0,
+        portcullisRaised: false,
+        portcullisY: 96,
+        wallSwitchDown: false,
+        alligatorTied: false,
+        alligatorJawOpen: false,
+        alligatorJawTimer: 0,
+        gameWon: false
+      },
+      dialog: null, // { speaker, text, progress, complete, onDone }
+      particles: [],
+      keys: {}
+    };
+
+    const ROOM_NAMES = [
+      "THE CASTLE DUNGEON",
+      "BEHIND THE FIREPLACE",
+      "THE ENTRANCE HALL",
+      "THE CASTLE MOAT"
+    ];
+
+    // --- 5. ROOM GEOMETRY & TILES (32 x 18 grid of 8x8 cells) ---
+    // Tile Legend:
+    // 0: Air
+    // 1: Stone Brick Wall (Solid)
+    // 2: Stone Floor (Solid)
+    // 3: Wood Platform (Jump-through solid top)
+    // 6: Iron Chain / Ladder (Climbable)
+    // 7: Water (Deadly)
+    // 8: Fire Hearth / Chimney base
+
+    function createRoomGrid(roomId) {
+      const grid = Array(18).fill(0).map(() => Array(32).fill(0));
+
+      // Ceiling (row 0-1) and Floor (row 16-17)
+      for (let c = 0; c < 32; c++) {
+        grid[0][c] = 1;
+        grid[1][c] = 1;
+        grid[16][c] = 2;
+        grid[17][c] = 2;
+      }
+
+      if (roomId === 0) {
+        // --- ROOM 0: THE CASTLE DUNGEON ---
+        // Left wall with fireplace opening at bottom (rows 14-15 open for fireplace crawlway)
+        for (let r = 0; r < 14; r++) { grid[r][0] = 1; grid[r][1] = 1; }
+
+        // Right wall with doorway opening at bottom (rows 12-15 open)
+        for (let r = 0; r < 12; r++) { grid[r][30] = 1; grid[r][31] = 1; }
+
+        // Fireplace structure on left (columns 2 to 5)
+        grid[12][2] = 1; grid[12][3] = 1; grid[12][4] = 1; grid[12][5] = 1;
+        grid[13][5] = 1; grid[14][5] = 1; grid[15][5] = 1;
+        grid[16][2] = 8; grid[16][3] = 8; grid[16][4] = 8;
+
+        // Hanging Chain from ceiling (column 12, rows 2 to 9)
+        for (let r = 2; r <= 9; r++) grid[r][12] = 6;
+      }
+      else if (roomId === 1) {
+        // --- ROOM 1: BEHIND THE FIREPLACE ---
+        // Left solid rock wall
+        for (let r = 0; r < 18; r++) { grid[r][0] = 1; grid[r][1] = 1; }
+        // Right wall has opening connecting to Room 0 fireplace (rows 12-15 open)
+        for (let r = 0; r < 12; r++) { grid[r][30] = 1; grid[r][31] = 1; }
+
+        // Secret high cavern ledge (columns 4 to 12, row 9)
+        for (let c = 4; c <= 12; c++) grid[9][c] = 2;
+        // Wooden ladder down from high ledge
+        for (let r = 10; r <= 15; r++) grid[r][11] = 6;
+
+        // Lower stone pedestal for heavy boulder (columns 18 to 22, row 14)
+        for (let c = 18; c <= 22; c++) {
+          grid[14][c] = 2;
+          grid[15][c] = 2;
+        }
+      }
+      else if (roomId === 2) {
+        // --- ROOM 2: THE ENTRANCE HALL & PORTCULLIS ---
+        // Left wall doorway connecting to Room 0 (rows 12-15 open)
+        for (let r = 0; r < 12; r++) { grid[r][0] = 1; grid[r][1] = 1; }
+        // Right wall opening towards moat (rows 12-15 open)
+        for (let r = 0; r < 12; r++) { grid[r][30] = 1; grid[r][31] = 1; }
+
+        // Grand stone staircase going up to balcony (columns 5 to 11)
+        grid[15][6] = 2;
+        grid[14][7] = 2; grid[15][7] = 2;
+        grid[13][8] = 2; grid[14][8] = 2; grid[15][8] = 2;
+        grid[12][9] = 2; grid[13][9] = 2; grid[14][9] = 2; grid[15][9] = 2;
+        grid[11][10] = 2; grid[12][10] = 2; grid[13][10] = 2; grid[14][10] = 2;
+
+        // Balcony walkway (columns 11 to 24, row 10)
+        for (let c = 11; c <= 24; c++) {
+          grid[10][c] = 3;
+        }
+        // Support pillars under balcony
+        for (let r = 11; r <= 15; r++) {
+          grid[r][16] = 1;
+          grid[r][23] = 1;
+        }
+
+        // High stone archway crest in center ceiling
+        grid[4][17] = 2; grid[4][18] = 2; grid[4][19] = 2;
+      }
+      else if (roomId === 3) {
+        // --- ROOM 3: THE CASTLE MOAT (SNAP HAPPY GATOR) ---
+        // Left castle wall with door opening at rows 12-15
+        for (let r = 0; r < 12; r++) { grid[r][0] = 1; grid[r][1] = 1; grid[r][2] = 1; }
+
+        // Left broken bridge section (columns 3 to 10, row 15)
+        for (let c = 3; c <= 10; c++) grid[15][c] = 3;
+        grid[15][3] = 2;
+
+        // Castle Moat Water! (columns 11 to 21, row 16-17 are deadly water)
+        for (let c = 11; c <= 21; c++) {
+          grid[16][c] = 7;
+          grid[17][c] = 7;
+        }
+
+        // Right bridge landing & grassy bank (columns 22 to 31)
+        for (let c = 22; c < 32; c++) {
+          grid[15][c] = 2;
+          grid[16][c] = 2;
+          grid[17][c] = 2;
+        }
+
+        // Right castle boundary archway
+        for (let r = 0; r < 12; r++) { grid[r][30] = 1; grid[r][31] = 1; }
+      }
+
+      return grid;
+    }
+
+    const ROOM_GRIDS = [0, 1, 2, 3].map(id => createRoomGrid(id));
+
+    // --- 6. RENDERERS & PIXEL GRAPHICS ---
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const offscreen = document.createElement('canvas');
+    offscreen.width = 256;
+    offscreen.height = 192;
+    const bctx = offscreen.getContext('2d');
+
+    /**
+     * Draw Dizzy Egg Sprite with iconic red boxing gloves & boots
+     */
+    function drawDizzy(ctx, p) {
+      ctx.save();
+      ctx.translate(Math.floor(p.x + p.width / 2), Math.floor(p.y + p.height / 2));
+
+      // Handle Somersault Rolling Rotation
+      if (p.isRolling || p.rollAngle !== 0) {
+        ctx.rotate((p.rollAngle * Math.PI) / 180);
+      }
+
+      const facing = p.facing;
+
+      // 1. Egg Body (14 wide x 18 tall)
+      // Black outline
+      ctx.fillStyle = ZX.BLACK;
+      ctx.fillRect(-6, -9, 12, 18);
+      ctx.fillRect(-7, -7, 14, 14);
+
+      // White egg shell
+      ctx.fillStyle = ZX.BRIGHT_WHITE;
+      ctx.fillRect(-5, -8, 10, 16);
+      ctx.fillRect(-6, -6, 12, 12);
+
+      // 2. Eyes & Expressions
+      if (p.isHurt) {
+        // Dizzy / Hurt "X X" eyes
+        ctx.fillStyle = ZX.BLACK;
+        ctx.fillRect(-4, -4, 3, 1);
+        ctx.fillRect(-3, -5, 1, 3);
+        ctx.fillRect(1, -4, 3, 1);
+        ctx.fillRect(2, -5, 1, 3);
+        ctx.fillRect(-1, 0, 2, 3);
+      } else {
+        const eyeOffset = facing > 0 ? 1 : -2;
+        ctx.fillStyle = ZX.BLACK;
+        ctx.fillRect(-4 + eyeOffset, -5, 3, 4);
+        ctx.fillRect(1 + eyeOffset, -5, 3, 4);
+
+        ctx.fillStyle = ZX.BRIGHT_WHITE;
+        ctx.fillRect(-3 + (facing > 0 ? eyeOffset : eyeOffset - 1), -4, 1, 2);
+        ctx.fillRect(2 + (facing > 0 ? eyeOffset : eyeOffset - 1), -4, 1, 2);
+
+        // Big cheeky smile
+        ctx.fillStyle = ZX.BLACK;
+        ctx.fillRect(-3 + eyeOffset, 1, 6, 1);
+        ctx.fillRect(-2 + eyeOffset, 2, 4, 1);
+      }
+
+      // 3. Red Boxing Gloves
+      ctx.fillStyle = ZX.BRIGHT_RED;
+      const gloveSwing = (p.walkFrame % 2 === 1) ? 2 : 0;
+      ctx.fillRect(-8, -2 + (facing > 0 ? gloveSwing : -gloveSwing), 3, 4);
+      ctx.fillRect(5, -2 + (facing > 0 ? -gloveSwing : gloveSwing), 3, 4);
+
+      // 4. Red Boxing Boots
+      ctx.fillStyle = ZX.BRIGHT_RED;
+      const bootOffset = (p.walkFrame === 1) ? 2 : (p.walkFrame === 3 ? -2 : 0);
+      ctx.fillRect(-6 + bootOffset, 7, 5, 4);
+      ctx.fillRect(1 - bootOffset, 7, 5, 4);
+
+      // Yellow bootlaces
+      ctx.fillStyle = ZX.BRIGHT_YELLOW;
+      ctx.fillRect(-5 + bootOffset, 8, 2, 1);
+      ctx.fillRect(2 - bootOffset, 8, 2, 1);
+
+      // Stars if hurt
+      if (p.isHurt) {
+        ctx.fillStyle = ZX.BRIGHT_YELLOW;
+        const tick = Date.now() * 0.01;
+        ctx.fillRect(-8 + Math.cos(tick) * 8, -14 + Math.sin(tick) * 3, 2, 2);
+        ctx.fillRect(6 + Math.cos(tick + 3) * 8, -14 + Math.sin(tick + 3) * 3, 2, 2);
+      }
+
+      ctx.restore();
+    }
+
+    /**
+     * Draw The Troll Guard (Room 0)
+     */
+    function drawTroll(ctx, x, y, facing) {
+      ctx.save();
+      ctx.translate(Math.floor(x), Math.floor(y));
+      ctx.scale(facing, 1);
+
+      // Troll Body (Green skin, red tunic, wooden club)
+      ctx.fillStyle = ZX.BRIGHT_GREEN;
+      ctx.fillRect(-6, -18, 12, 10);
+      ctx.fillStyle = ZX.BLACK;
+      ctx.fillRect(-7, -20, 14, 4);
+      ctx.fillRect(-5, -14, 10, 2);
+
+      // Angry Eyes & Tusks
+      ctx.fillStyle = ZX.BRIGHT_YELLOW;
+      ctx.fillRect(-4, -13, 2, 2);
+      ctx.fillRect(2, -13, 2, 2);
+      ctx.fillStyle = ZX.BRIGHT_WHITE;
+      ctx.fillRect(-3, -9, 2, 3);
+      ctx.fillRect(1, -9, 2, 3);
+
+      // Red Tunic
+      ctx.fillStyle = ZX.BRIGHT_RED;
+      ctx.fillRect(-8, -8, 16, 12);
+      ctx.fillStyle = ZX.YELLOW;
+      ctx.fillRect(-8, -1, 16, 2);
+
+      // Arms & Hands
+      ctx.fillStyle = ZX.BRIGHT_GREEN;
+      ctx.fillRect(-10, -6, 3, 8);
+      ctx.fillRect(7, -6, 3, 8);
+
+      // Wooden Club
+      ctx.fillStyle = ZX.YELLOW;
+      ctx.fillRect(9, -16, 4, 18);
+      ctx.fillRect(8, -20, 6, 6);
+
+      // Boots
+      ctx.fillStyle = ZX.BLACK;
+      ctx.fillRect(-6, 4, 5, 4);
+      ctx.fillRect(1, 4, 5, 4);
+
+      ctx.restore();
+    }
+
+    /**
+     * Draw The Hungry Rat (Room 0)
+     */
+    function drawRat(ctx, x, y, dir, isEating) {
+      ctx.save();
+      ctx.translate(Math.floor(x), Math.floor(y));
+      ctx.scale(dir, 1);
+
+      ctx.fillStyle = ZX.WHITE;
+      ctx.fillRect(-6, -4, 10, 5);
+      ctx.fillRect(2, -3, 4, 3);
+
+      ctx.fillStyle = ZX.BRIGHT_RED;
+      ctx.fillRect(5, -2, 1, 1);
+      ctx.fillRect(-2, -5, 2, 2);
+      ctx.fillRect(2, -3, 1, 1);
+
+      ctx.fillStyle = ZX.BRIGHT_MAGENTA;
+      ctx.fillRect(-9, -2, 4, 1);
+      ctx.fillRect(-11, -4, 3, 1);
+
+      ctx.fillStyle = ZX.BLACK;
+      const step = (Math.floor(Date.now() / 80) % 2 === 0 && !isEating) ? 1 : 0;
+      ctx.fillRect(-4 + step, 1, 2, 2);
+      ctx.fillRect(1 - step, 1, 2, 2);
+
+      ctx.restore();
+    }
+
+    /**
+     * Draw The Snap Happy Gator (Room 3)
+     */
+    function drawAlligator(ctx, x, y, isTied, jawOpen) {
+      ctx.save();
+      ctx.translate(Math.floor(x), Math.floor(y));
+
+      ctx.fillStyle = ZX.GREEN;
+      ctx.fillRect(-14, -4, 28, 6);
+
+      ctx.fillStyle = ZX.BRIGHT_GREEN;
+      for (let s = -12; s <= 6; s += 4) {
+        ctx.fillRect(s, -6, 2, 2);
+      }
+
+      ctx.fillStyle = ZX.BRIGHT_GREEN;
+      ctx.fillRect(8, -4, 12, 3);
+
+      ctx.fillStyle = ZX.BRIGHT_YELLOW;
+      ctx.fillRect(6, -7, 3, 3);
+      ctx.fillStyle = ZX.BLACK;
+      ctx.fillRect(7, -6, 1, 2);
+
+      if (isTied) {
+        // Snout wrapped in golden rope!
+        ctx.fillStyle = ZX.BRIGHT_YELLOW;
+        ctx.fillRect(11, -5, 2, 5);
+        ctx.fillRect(15, -5, 2, 5);
+        ctx.fillStyle = ZX.BLACK;
+        ctx.fillRect(6, -6, 3, 1);
+      } else {
+        ctx.fillStyle = ZX.BRIGHT_GREEN;
+        const jawY = jawOpen ? 1 : -1;
+        ctx.fillRect(8, jawY, 11, 2);
+
+        if (jawOpen) {
+          ctx.fillStyle = ZX.BRIGHT_WHITE;
+          ctx.fillRect(10, -1, 2, 1);
+          ctx.fillRect(14, -1, 2, 1);
+          ctx.fillRect(12, 0, 2, 1);
+        }
+      }
+
+      ctx.restore();
+    }
+
+    /**
+     * Draw Authentic Wooden Dungeon Barrel (Room 0)
+     */
+    function drawBarrel(ctx, x, y) {
+      ctx.save();
+      ctx.translate(x, y);
+
+      // Wooden body
+      ctx.fillStyle = ZX.YELLOW;
+      ctx.fillRect(1, 0, 14, 16);
+      ctx.fillRect(0, 2, 16, 12);
+
+      // Iron Hoops
+      ctx.fillStyle = ZX.BLACK;
+      ctx.fillRect(0, 3, 16, 2);
+      ctx.fillRect(0, 11, 16, 2);
+
+      // Stave lines
+      ctx.fillStyle = ZX.RED;
+      ctx.fillRect(4, 0, 1, 16);
+      ctx.fillRect(8, 0, 1, 16);
+      ctx.fillRect(12, 0, 1, 16);
+
+      ctx.restore();
+    }
+
+    /**
+     * Draw Room Tiles & Background
+     */
+    function drawRoomScenery(ctx, roomId) {
+      const grid = ROOM_GRIDS[roomId];
+
+      for (let r = 0; r < 18; r++) {
+        for (let c = 0; c < 32; c++) {
+          const tile = grid[r][c];
+          const x = c * 8;
+          const y = r * 8;
+
+          if (tile === 1) {
+            // Stone Brick Wall (ZX Spectrum attribute brickwork)
+            ctx.fillStyle = ZX.BLACK;
+            ctx.fillRect(x, y, 8, 8);
+            ctx.fillStyle = (roomId === 1) ? ZX.MAGENTA : ZX.CYAN;
+            ctx.fillRect(x, y, 8, 1);
+            ctx.fillRect(x, y + 4, 8, 1);
+            const stagger = (r % 2 === 0) ? 0 : 4;
+            ctx.fillRect(x + stagger, y, 1, 4);
+            ctx.fillRect(x + ((stagger + 4) % 8), y + 4, 1, 4);
+          } else if (tile === 2) {
+            // Solid Stone Floor
+            ctx.fillStyle = (roomId === 3 && c >= 22) ? ZX.BRIGHT_GREEN : ZX.WHITE;
+            ctx.fillRect(x, y, 8, 2);
+            ctx.fillStyle = ZX.BLACK;
+            ctx.fillRect(x, y + 2, 8, 6);
+            ctx.fillStyle = ZX.BLUE;
+            ctx.fillRect(x, y + 2, 8, 1);
+          } else if (tile === 3) {
+            // Wooden Beam / Bridge / Balcony Platform
+            ctx.fillStyle = ZX.BRIGHT_YELLOW;
+            ctx.fillRect(x, y, 8, 3);
+            ctx.fillStyle = ZX.RED;
+            ctx.fillRect(x, y + 3, 8, 2);
+          } else if (tile === 6) {
+            // Hanging Chain or Wooden Ladder
+            ctx.fillStyle = ZX.BRIGHT_WHITE;
+            ctx.fillRect(x + 3, y, 2, 8);
+            ctx.fillStyle = ZX.CYAN;
+            ctx.fillRect(x + 2, y + 2, 4, 1);
+            ctx.fillRect(x + 2, y + 6, 4, 1);
+          } else if (tile === 7) {
+            // Castle Moat Water!
+            ctx.fillStyle = ZX.BRIGHT_BLUE;
+            ctx.fillRect(x, y, 8, 8);
+            ctx.fillStyle = ZX.BRIGHT_CYAN;
+            const wave = Math.floor((Date.now() / 150 + c) % 4);
+            ctx.fillRect(x, y + wave, 8, 1);
+          } else if (tile === 8) {
+            // Fireplace stone base
+            ctx.fillStyle = ZX.WHITE;
+            ctx.fillRect(x, y, 8, 8);
+            ctx.fillStyle = ZX.RED;
+            ctx.fillRect(x + 1, y + 1, 6, 6);
+          }
+        }
+      }
+
+      // Room-specific unique scenery
+      if (roomId === 0) {
+        // Fireplace Arch & Fire (Room 0)
+        ctx.fillStyle = ZX.WHITE;
+        ctx.fillRect(16, 96, 24, 6);
+        ctx.fillRect(16, 96, 6, 32);
+        ctx.fillRect(34, 96, 6, 32);
+
+        // Animated Fire or Extinguished Embers
+        if (STATE.puzzles.fireLit) {
+          const fFrame = Math.floor(Date.now() / 120) % 3;
+          ctx.fillStyle = (fFrame === 0) ? ZX.BRIGHT_RED : (fFrame === 1 ? ZX.BRIGHT_YELLOW : ZX.RED);
+          ctx.fillRect(22, 114, 12, 14);
+          ctx.fillStyle = ZX.BRIGHT_WHITE;
+          ctx.fillRect(25, 118, 6, 8);
+          // Sparks
+          if (Math.random() < 0.3) {
+            STATE.particles.push({
+              x: 24 + Math.random() * 8, y: 110,
+              vx: (Math.random() - 0.5) * 0.4, vy: -0.6,
+              color: ZX.BRIGHT_YELLOW, life: 25
+            });
+          }
+        } else {
+          // Extinguished cool black/grey embers
+          ctx.fillStyle = ZX.BLACK;
+          ctx.fillRect(22, 122, 12, 6);
+          ctx.fillStyle = ZX.WHITE;
+          ctx.fillRect(24, 123, 8, 2);
+          // Gentle steam puff
+          if (Math.random() < 0.08) {
+            STATE.particles.push({
+              x: 26 + Math.random() * 4, y: 120,
+              vx: (Math.random() - 0.5) * 0.2, vy: -0.4,
+              color: ZX.CYAN, life: 30
+            });
+          }
+        }
+
+        // Authentic Wooden Dungeon Barrel at column 11-12
+        drawBarrel(ctx, 88, 112);
+
+        // Dungeon window with blue moonlight bars
+        ctx.fillStyle = ZX.BLUE;
+        ctx.fillRect(140, 24, 20, 24);
+        ctx.fillStyle = ZX.BLACK;
+        ctx.fillRect(146, 24, 2, 24);
+        ctx.fillRect(154, 24, 2, 24);
+        ctx.fillRect(140, 36, 20, 2);
+      }
+      else if (roomId === 1) {
+        // Behind the fireplace: Dripping stalactites
+        ctx.fillStyle = ZX.MAGENTA;
+        ctx.fillRect(50, 16, 6, 12);
+        ctx.fillRect(52, 28, 2, 6);
+        ctx.fillRect(180, 16, 8, 14);
+        ctx.fillRect(183, 30, 2, 8);
+
+        // Water drip particle
+        if (Math.random() < 0.05) {
+          STATE.particles.push({
+            x: 184, y: 38, vx: 0, vy: 1.2, color: ZX.BRIGHT_CYAN, life: 60
+          });
+        }
+      }
+      else if (roomId === 2) {
+        // Balustrade / Railing along the high balcony
+        ctx.fillStyle = ZX.BRIGHT_CYAN;
+        ctx.fillRect(88, 70, 104, 2);
+        for (let bx = 88; bx <= 192; bx += 8) {
+          ctx.fillRect(bx, 72, 2, 8);
+        }
+
+        // Wall Switch (Lever) on high balcony at x = 112, y = 58
+        ctx.fillStyle = ZX.WHITE;
+        ctx.fillRect(112, 60, 6, 10);
+        ctx.fillStyle = ZX.BRIGHT_YELLOW;
+        if (STATE.puzzles.wallSwitchDown) {
+          ctx.fillRect(114, 65, 5, 2);
+          ctx.fillRect(118, 67, 3, 3);
+        } else {
+          ctx.fillRect(114, 61, 5, 2);
+          ctx.fillRect(118, 58, 3, 3);
+        }
+
+        // The Heavy Portcullis Gate at x = 232
+        const py = STATE.puzzles.portcullisRaised ? 64 : 96;
+        ctx.fillStyle = ZX.BRIGHT_WHITE;
+        for (let px = 232; px <= 248; px += 4) {
+          ctx.fillRect(px, py, 2, 32);
+          ctx.fillRect(px - 1, py + 30, 4, 3);
+        }
+        ctx.fillRect(230, py + 8, 22, 2);
+        ctx.fillRect(230, py + 20, 22, 2);
+      }
+      else if (roomId === 3) {
+        // Sun / Moon in sky
+        ctx.fillStyle = ZX.BRIGHT_YELLOW;
+        ctx.beginPath();
+        ctx.arc(200, 30, 8, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Castle Outer Archway on far right
+        ctx.fillStyle = ZX.BRIGHT_GREEN;
+        ctx.fillRect(240, 96, 16, 24);
+        ctx.fillStyle = ZX.BLACK;
+        ctx.fillRect(244, 102, 10, 18);
+      }
+    }
+
+    /**
+     * Draw Collectible Items and Coins
+     */
+    function drawItem(ctx, name, x, y) {
+      ctx.save();
+      ctx.translate(Math.floor(x), Math.floor(y));
+
+      if (name === "A Fresh Green Apple") {
+        ctx.fillStyle = ZX.BRIGHT_GREEN;
+        ctx.fillRect(2, 3, 8, 8);
+        ctx.fillRect(3, 2, 6, 10);
+        ctx.fillStyle = ZX.YELLOW;
+        ctx.fillRect(5, 0, 2, 3);
+        ctx.fillStyle = ZX.BRIGHT_WHITE;
+        ctx.fillRect(4, 4, 2, 2);
+      }
+      else if (name === "A Jug of Cold Water") {
+        ctx.fillStyle = ZX.BRIGHT_CYAN;
+        ctx.fillRect(2, 3, 8, 9);
+        ctx.fillRect(3, 1, 6, 2);
+        ctx.fillStyle = ZX.CYAN;
+        ctx.fillRect(0, 4, 2, 6);
+        ctx.fillStyle = ZX.BRIGHT_WHITE;
+        ctx.fillRect(4, 5, 2, 4);
+      }
+      else if (name === "A Stale Loaf of Bread") {
+        ctx.fillStyle = ZX.YELLOW;
+        ctx.fillRect(1, 4, 12, 6);
+        ctx.fillStyle = ZX.BRIGHT_WHITE;
+        ctx.fillRect(4, 5, 2, 4);
+        ctx.fillRect(8, 5, 2, 4);
+      }
+      else if (name === "A Heavy Boulder") {
+        ctx.fillStyle = ZX.WHITE;
+        ctx.fillRect(2, 2, 12, 12);
+        ctx.fillRect(4, 0, 8, 16);
+        ctx.fillStyle = ZX.BLACK;
+        ctx.fillRect(5, 5, 3, 3);
+        ctx.fillRect(9, 8, 2, 2);
+      }
+      else if (name === "A Piece of Rope") {
+        ctx.fillStyle = ZX.BRIGHT_YELLOW;
+        ctx.fillRect(2, 3, 8, 7);
+        ctx.fillStyle = ZX.BLACK;
+        ctx.fillRect(4, 5, 4, 3);
+        ctx.fillStyle = ZX.BRIGHT_WHITE;
+        ctx.fillRect(3, 4, 2, 2);
+      }
+
+      ctx.restore();
+    }
+
+    function drawCoin(ctx, x, y) {
+      ctx.save();
+      ctx.translate(Math.floor(x), Math.floor(y));
+
+      ctx.fillStyle = ZX.BRIGHT_YELLOW;
+      ctx.fillRect(2, 1, 4, 6);
+      ctx.fillRect(1, 2, 6, 4);
+      ctx.fillStyle = ZX.YELLOW;
+      ctx.fillRect(3, 3, 2, 2);
+
+      if (Math.floor(Date.now() / 200) % 2 === 0) {
+        ctx.fillStyle = ZX.BRIGHT_WHITE;
+        ctx.fillRect(2, 2, 2, 2);
+      }
+
+      ctx.restore();
+    }
+
+    /**
+     * Draw ZX Spectrum HUD (Bottom 48 Scanlines: y = 144 to 191)
+     */
+    function drawHUD(ctx) {
+      ctx.fillStyle = ZX.BLACK;
+      ctx.fillRect(0, 144, 256, 48);
+
+      ctx.fillStyle = ZX.BRIGHT_WHITE;
+      ctx.fillRect(0, 144, 256, 1);
+      ctx.fillStyle = ZX.CYAN;
+      ctx.fillRect(0, 145, 256, 1);
+
+      // Line 1: Energy & Lives
+      drawText(ctx, "ENERGY", 8, 148, ZX.CYAN);
+
+      const energyWidth = Math.max(0, Math.floor((STATE.player.energy / 100) * 54));
+      ctx.fillStyle = ZX.RED;
+      ctx.fillRect(60, 148, 54, 7);
+      ctx.fillStyle = (STATE.player.energy > 40) ? ZX.BRIGHT_GREEN : ZX.BRIGHT_YELLOW;
+      ctx.fillRect(60, 148, energyWidth, 7);
+
+      drawText(ctx, "LIVES:", 128, 148, ZX.CYAN);
+      for (let l = 0; l < STATE.player.lives; l++) {
+        ctx.fillStyle = ZX.BRIGHT_WHITE;
+        ctx.fillRect(180 + l * 12, 147, 6, 8);
+        ctx.fillRect(181 + l * 12, 146, 4, 10);
+      }
+
+      // Line 2: Coins Tally
+      drawText(ctx, `COINS FOUND: ${STATE.coinsFound} / 5`, 8, 159, ZX.BRIGHT_YELLOW);
+      drawCoin(ctx, 160, 158);
+
+      // Line 3 & 4: Inventory
+      ctx.fillStyle = ZX.BLUE;
+      ctx.fillRect(0, 168, 256, 1);
+
+      const inv = STATE.player.inventory;
+      const slot1Name = inv[0] || "(EMPTY)";
+      const slot2Name = inv[1] || "(EMPTY)";
+
+      const arrow1 = (STATE.player.activeSlot === 0) ? ">" : " ";
+      const arrow2 = (STATE.player.activeSlot === 1) ? ">" : " ";
+
+      drawText(ctx, `${arrow1}[1] ${slot1Name}`, 8, 172, (STATE.player.activeSlot === 0) ? ZX.BRIGHT_WHITE : ZX.WHITE);
+      drawText(ctx, `${arrow2}[2] ${slot2Name}`, 8, 181, (STATE.player.activeSlot === 1) ? ZX.BRIGHT_WHITE : ZX.WHITE);
+
+      const nearbyItem = getNearbyGroundItem();
+      if (nearbyItem) {
+        drawText(ctx, "[P] PICK UP", 168, 172, ZX.BRIGHT_YELLOW);
+      } else if (isNearbyAction()) {
+        drawText(ctx, "[U] ACTION", 168, 172, ZX.BRIGHT_GREEN);
+      }
+    }
+
+    /**
+     * Draw Dialog Overlay Box (Authentic Spectrum Popup)
+     */
+    function drawDialogBox(ctx) {
+      if (!STATE.dialog) return;
+
+      const d = STATE.dialog;
+      const boxX = 16;
+      const boxY = 24;
+      const boxW = 224;
+      const boxH = 96;
+
+      ctx.fillStyle = ZX.BLACK;
+      ctx.fillRect(boxX, boxY, boxW, boxH);
+      ctx.fillStyle = ZX.BRIGHT_CYAN;
+      ctx.strokeRect(boxX + 0.5, boxY + 0.5, boxW - 1, boxH - 1);
+      ctx.strokeRect(boxX + 2.5, boxY + 2.5, boxW - 5, boxH - 5);
+
+      drawText(ctx, `* ${d.speaker} *`, boxX + 12, boxY + 8, ZX.BRIGHT_YELLOW);
+
+      const textToDisplay = d.text.substr(0, d.progress);
+      const lines = wrapText(textToDisplay, 25);
+      for (let i = 0; i < lines.length; i++) {
+        drawText(ctx, lines[i], boxX + 12, boxY + 24 + i * 11, ZX.BRIGHT_WHITE);
+      }
+
+      if (d.progress >= d.text.length) {
+        if (Math.floor(Date.now() / 300) % 2 === 0) {
+          drawText(ctx, "[ENTER / U] CONTINUE", boxX + 24, boxY + boxH - 14, ZX.BRIGHT_CYAN);
+        }
+      }
+    }
+
+    function wrapText(text, maxChars) {
+      const words = text.split(" ");
+      const lines = [];
+      let current = "";
+      for (let w of words) {
+        if ((current + (current ? " " : "") + w).length <= maxChars) {
+          current += (current ? " " : "") + w;
+        } else {
+          lines.push(current);
+          current = w;
+        }
+      }
+      if (current) lines.push(current);
+      return lines;
+    }
+
+    // --- 7. COLLISION & PHYSICS ENGINE ---
+    function isSolid(tile) {
+      return tile === 1 || tile === 2 || tile === 8;
+    }
+
+    function isLadderOrChain(roomId, x, y) {
+      const grid = ROOM_GRIDS[roomId];
+      const c = Math.floor(x / 8);
+      const r = Math.floor(y / 8);
+      if (r >= 0 && r < 18 && c >= 0 && c < 32) {
+        return grid[r][c] === 6;
+      }
+      return false;
+    }
+
+    function checkCollision(x, y, w, h, roomId) {
+      const grid = ROOM_GRIDS[roomId];
+      const startC = Math.max(0, Math.floor(x / 8));
+      const endC = Math.min(31, Math.floor((x + w - 1) / 8));
+      const startR = Math.max(0, Math.floor(y / 8));
+      const endR = Math.min(17, Math.floor((y + h - 1) / 8));
+
+      // Check Barrel in Room 0 (x: 88 to 104, y: 112 to 128)
+      if (roomId === 0) {
+        if (x + w > 88 && x < 104 && y + h > 112 && y < 128) {
+          return { solid: true, type: 'barrel' };
+        }
+      }
+
+      // Check portcullis in Room 2
+      if (roomId === 2 && !STATE.puzzles.portcullisRaised) {
+        if (x + w > 230 && x < 252 && y + h > 88) {
+          return { solid: true, type: 'portcullis' };
+        }
+      }
+
+      // Check Troll guard in Room 0
+      if (roomId === 0 && !STATE.puzzles.trollBribed) {
+        if (x + w > STATE.puzzles.trollX - 8 && x < STATE.puzzles.trollX + 12 && y + h > 96) {
+          return { solid: true, type: 'troll' };
+        }
+      }
+
+      for (let r = startR; r <= endR; r++) {
+        for (let c = startC; c <= endC; c++) {
+          const t = grid[r][c];
+          if (isSolid(t)) return { solid: true, type: t };
+          if (t === 7) return { water: true };
+          if (t === 3 && y + h <= r * 8 + 4) return { platform: true, topY: r * 8 };
+        }
+      }
+      return { solid: false };
+    }
+
+    /**
+     * Check if Dizzy can stand on an alligator in Room 3
+     */
+    function checkAlligatorPlatform(p) {
+      if (STATE.currentRoom !== 3 || !STATE.puzzles.alligatorTied) return false;
+      const gatorX = 118;
+      const gatorY = 122;
+      if (p.x + p.width > gatorX && p.x < gatorX + 36) {
+        if (p.y + p.height >= gatorY - 3 && p.y + p.height <= gatorY + 6 && p.vy >= 0) {
+          return gatorY;
+        }
+      }
+      return false;
+    }
+
+    // --- 8. DIALOG & PUZZLE INTERACTIONS ---
+    function triggerDialog(speaker, text, onDone = null) {
+      STATE.dialog = {
+        speaker,
+        text,
+        progress: 0,
+        complete: false,
+        onDone
+      };
+      sound.playChime();
+    }
+
+    function advanceDialog() {
+      if (!STATE.dialog) return;
+      if (STATE.dialog.progress < STATE.dialog.text.length) {
+        STATE.dialog.progress = STATE.dialog.text.length;
+      } else {
+        const cb = STATE.dialog.onDone;
+        STATE.dialog = null;
+        if (cb) cb();
+      }
+    }
+
+    function getNearbyGroundItem() {
+      const p = STATE.player;
+      return STATE.groundItems.find(it => 
+        it.room === STATE.currentRoom &&
+        Math.abs((it.x + 4) - (p.x + p.width / 2)) < 14 &&
+        Math.abs((it.y + 4) - (p.y + p.height / 2)) < 16
+      );
+    }
+
+    function isNearbyAction() {
+      const p = STATE.player;
+      const r = STATE.currentRoom;
+
+      if (r === 0 && !STATE.puzzles.trollBribed && p.x > 185) return true;
+      if (r === 0 && p.x < 42 && STATE.puzzles.fireLit) return true;
+      if (r === 0 && !STATE.puzzles.ratFed && Math.abs(p.x - STATE.puzzles.ratX) < 30) return true;
+      if (r === 2 && Math.abs(p.x - 114) < 18 && p.y < 80) return true;
+      if (r === 2 && Math.abs(p.x - 160) < 18 && p.y < 80) return true;
+      if (r === 3 && p.x > 80 && p.x < 125) return true;
+
+      return false;
+    }
+
+    /**
+     * Use / Action Handler
+     */
+    function performAction() {
+      sound.ensure();
+      const p = STATE.player;
+      const r = STATE.currentRoom;
+      const inv = p.inventory;
+      const activeItem = inv[p.activeSlot];
+
+      // 1. TROLL GUARD (Room 0)
+      if (r === 0 && !STATE.puzzles.trollBribed && p.x > 180) {
+        const hasApple = inv.includes("A Fresh Green Apple");
+        if (hasApple) {
+          const idx = inv.indexOf("A Fresh Green Apple");
+          inv[idx] = null;
+
+          triggerDialog("TROLL GUARD", "Mmm! A fresh green apple! That'll fill my belly! You could escape through the fire using water!", () => {
+            STATE.puzzles.trollBribed = true;
+            STATE.puzzles.trollWalkingOff = true;
+            sound.playChime();
+          });
+        } else {
+          triggerDialog("TROLL GUARD", "Grrr! None shall pass! I am starving! Bring me something tasty to eat!");
+        }
+        return;
+      }
+
+      // 2. FIREPLACE (Room 0)
+      if (r === 0 && p.x < 45 && STATE.puzzles.fireLit) {
+        const hasWater = inv.includes("A Jug of Cold Water");
+        if (hasWater) {
+          const idx = inv.indexOf("A Jug of Cold Water");
+          inv[idx] = null;
+          STATE.puzzles.fireLit = false;
+          sound.playHiss();
+
+          triggerDialog("DIZZY", "You splash the cold water onto the roaring fire! *HISSSSS* The fire is extinguished! Safe to pass left!", () => {
+            for (let i = 0; i < 30; i++) {
+              STATE.particles.push({
+                x: 24 + Math.random() * 12, y: 116,
+                vx: (Math.random() - 0.5) * 0.8, vy: -0.8 - Math.random() * 0.8,
+                color: ZX.BRIGHT_WHITE, life: 40
+              });
+            }
+          });
+        } else {
+          triggerDialog("DIZZY", "The fire is blazing fiercely! I'll be roasted alive if I try to crawl through!");
+        }
+        return;
+      }
+
+      // 3. HUNGRY RAT (Room 0)
+      if (r === 0 && !STATE.puzzles.ratFed && Math.abs(p.x - STATE.puzzles.ratX) < 36) {
+        const hasBread = inv.includes("A Stale Loaf of Bread");
+        if (hasBread) {
+          const idx = inv.indexOf("A Stale Loaf of Bread");
+          inv[idx] = null;
+          STATE.puzzles.ratEating = true;
+          STATE.puzzles.ratEatTimer = 60;
+          sound.playChime();
+
+          triggerDialog("DIZZY", "You give the stale bread to the hungry rat. Squeak! It munches happily and scurries into the wall!", () => {
+            STATE.puzzles.ratFed = true;
+          });
+        } else {
+          triggerDialog("DIZZY", "A vicious castle rat! It looks hungry and ready to bite!");
+        }
+        return;
+      }
+
+      // 4. WALL SWITCH / PORTCULLIS (Room 2)
+      if (r === 2 && Math.abs(p.x - 114) < 18 && p.y < 80) {
+        STATE.puzzles.wallSwitchDown = !STATE.puzzles.wallSwitchDown;
+        STATE.puzzles.portcullisRaised = STATE.puzzles.wallSwitchDown;
+        sound.playLever();
+
+        const msg = STATE.puzzles.portcullisRaised 
+          ? "*CLANK-CLANK!* You pull the lever down! The heavy portcullis gate raises open!"
+          : "*CLANK!* You push the lever up. The portcullis lowers shut.";
+        triggerDialog("WALL LEVER", msg);
+        return;
+      }
+
+      // 5. HIDDEN COIN IN BALUSTRADE / RAILING (Room 2)
+      if (r === 2 && Math.abs(p.x - 160) < 18 && p.y < 80) {
+        const c3 = STATE.coins.find(c => c.id === 3);
+        if (c3 && c3.hiddenInRailing) {
+          c3.hiddenInRailing = false;
+          sound.playCoin();
+          triggerDialog("SECRET RAILING", "You inspect the loose stone railing... A golden coin falls out into view!");
+          return;
+        }
+      }
+
+      // 6. SNAP HAPPY GATOR (Room 3)
+      if (r === 3 && p.x > 80 && p.x < 130) {
+        const hasRope = inv.includes("A Piece of Rope");
+        if (hasRope) {
+          const idx = inv.indexOf("A Piece of Rope");
+          inv[idx] = null;
+          STATE.puzzles.alligatorTied = true;
+          sound.playChime();
+
+          triggerDialog("DIZZY", "You lasso the rope around the alligator's snout and tie it shut! It is now a safe stepping stone!", () => {
+            sound.playCoin();
+          });
+        } else {
+          triggerDialog("DIZZY", "Snap Happy Gator is snapping its jaws! Falling in will be instant doom! I need something to tie its snout!");
+        }
+        return;
+      }
+
+      if (activeItem) {
+        triggerDialog("INVENTORY", `You are carrying ${activeItem}. Nothing here to use it on.`);
+      } else {
+        triggerDialog("DIZZY", "Nothing here to operate. Keep searching!");
+      }
+    }
+
+    /**
+     * Pick Up / Drop Items
+     */
+    function pickUpOrDrop() {
+      sound.ensure();
+      const p = STATE.player;
+      const groundItem = getNearbyGroundItem();
+
+      if (groundItem) {
+        if (p.inventory[0] === null) {
+          p.inventory[0] = groundItem.name;
+          removeItemFromGround(groundItem);
+          sound.playChime();
+        } else if (p.inventory[1] === null) {
+          p.inventory[1] = groundItem.name;
+          p.activeSlot = 1;
+          removeItemFromGround(groundItem);
+          sound.playChime();
+        } else {
+          // Inventory full (2 items): Swap active slot with ground item!
+          const swapped = p.inventory[p.activeSlot];
+          p.inventory[p.activeSlot] = groundItem.name;
+          groundItem.name = swapped;
+          sound.playChime();
+        }
+      } else {
+        // Drop active item onto ground
+        if (p.inventory[p.activeSlot] !== null) {
+          const droppedName = p.inventory[p.activeSlot];
+          p.inventory[p.activeSlot] = null;
+          STATE.groundItems.push({
+            name: droppedName,
+            room: STATE.currentRoom,
+            x: Math.round(p.x),
+            y: Math.round(p.y + p.height - 8)
+          });
+          sound.playLand();
+        }
+      }
+    }
+
+    function removeItemFromGround(item) {
+      const idx = STATE.groundItems.indexOf(item);
+      if (idx !== -1) STATE.groundItems.splice(idx, 1);
+    }
+
+    // --- 9. PLAYER UPDATE & FLIP-SCREEN MECHANICS ---
+    function updatePlayer() {
+      const p = STATE.player;
+
+      if (p.isHurt) {
+        p.hurtTimer--;
+        if (p.hurtTimer <= 0) p.isHurt = false;
+      }
+
+      if (p.isDead) {
+        p.deathTimer--;
+        p.y -= 0.6; // Angel float up
+        if (p.deathTimer <= 0) {
+          respawnPlayer();
+        }
+        return;
+      }
+
+      // Check ladder / chain climbing
+      const onLadder = isLadderOrChain(STATE.currentRoom, p.x + p.width / 2, p.y + p.height / 2) ||
+                       isLadderOrChain(STATE.currentRoom, p.x + p.width / 2, p.y + p.height - 2);
+
+      const upPressed = STATE.keys['ArrowUp'] || STATE.keys['KeyW'] || STATE.keys['btnJump'];
+      const downPressed = STATE.keys['ArrowDown'] || STATE.keys['KeyS'] || STATE.keys['btnDown'];
+
+      if (onLadder && (upPressed || downPressed) && !p.isRolling) {
+        p.isClimbing = true;
+        p.isJumping = false;
+      }
+
+      if (p.isClimbing) {
+        if (!onLadder) {
+          p.isClimbing = false;
+        } else {
+          p.vy = 0;
+          if (upPressed) p.vy = -1.2;
+          if (downPressed) p.vy = 1.2;
+          p.onGround = true;
+
+          // Jump off ladder
+          if (STATE.keys['Space']) {
+            p.isClimbing = false;
+            p.vy = -3.75;
+            sound.playJump();
+          }
+        }
+      }
+
+      // Horizontal Walking Input
+      let moveDir = 0;
+      if (STATE.keys['ArrowLeft'] || STATE.keys['KeyA'] || STATE.keys['btnLeft']) moveDir -= 1;
+      if (STATE.keys['ArrowRight'] || STATE.keys['KeyD'] || STATE.keys['btnRight']) moveDir += 1;
+
+      if (moveDir !== 0 && !p.isRolling) {
+        p.facing = moveDir;
+        p.vx = moveDir * 1.25;
+        p.walkTicks++;
+        if (p.walkTicks % 6 === 0) {
+          p.walkFrame = (p.walkFrame + 1) % 4;
+        }
+      } else if (!p.isRolling) {
+        p.vx = 0;
+        p.walkFrame = 0;
+      }
+
+      // Jump & Signature Somersault Roll
+      const jumpTrigger = (STATE.keys['Space'] || (upPressed && !onLadder));
+      if (jumpTrigger && p.onGround && !p.isRolling && !p.isClimbing) {
+        p.vy = -3.75;
+        p.onGround = false;
+        p.isJumping = true;
+        sound.playJump();
+
+        if (moveDir !== 0) {
+          p.isRolling = true;
+          p.rollAngle = 0;
+        }
+      }
+
+      // Apply Gravity (if not climbing)
+      if (!p.isClimbing) {
+        p.vy += 0.25;
+        if (p.vy > 4.5) p.vy = 4.5;
+      }
+
+      // Update Horizontal Movement
+      const nextX = p.x + p.vx;
+      const colX = checkCollision(nextX, p.y, p.width, p.height, STATE.currentRoom);
+      if (!colX.solid) {
+        p.x = nextX;
+      } else {
+        p.vx = 0;
+      }
+
+      // Update Vertical Movement
+      const nextY = p.y + p.vy;
+      const colY = checkCollision(p.x, nextY, p.width, p.height, STATE.currentRoom);
+
+      // Check gator stepping stone platform in Room 3
+      const gatorY = checkAlligatorPlatform(p);
+
+      if (gatorY !== false) {
+        p.y = gatorY - p.height;
+        p.vy = 0;
+        p.onGround = true;
+        p.isJumping = false;
+        p.isClimbing = false;
+      } else if (!colY.solid) {
+        p.y = nextY;
+        if (!p.isClimbing) {
+          p.onGround = false;
+          if (p.vy > 0) p.fallDistance += p.vy;
+        }
+      } else {
+        if (p.vy > 0) {
+          p.y = Math.floor((nextY + p.height) / 8) * 8 - p.height;
+          p.onGround = true;
+          p.isJumping = false;
+          p.isClimbing = false;
+
+          // Extreme fall impact damage
+          if (p.fallDistance > 55) {
+            p.energy = Math.max(0, p.energy - 20);
+            p.isHurt = true;
+            p.hurtTimer = 40;
+            sound.playLand();
+            if (p.energy <= 0) killPlayer("FALLEN FROM A GREAT HEIGHT!");
+          } else if (p.fallDistance > 8) {
+            sound.playLand();
+          }
+          p.fallDistance = 0;
+        } else if (p.vy < 0) {
+          p.vy = 0;
+        }
+      }
+
+      // Somersault Roll Rotation & Ground Stumble
+      if (p.isRolling) {
+        p.rollAngle = (p.rollAngle + p.facing * 18) % 360;
+        if (p.rollAngle < 0) p.rollAngle += 360;
+
+        if (p.onGround) {
+          p.x += p.facing * 0.8;
+          if (Math.abs(p.rollAngle) < 20 || Math.abs(p.rollAngle - 360) < 20) {
+            p.rollAngle = 0;
+            p.isRolling = false;
+          }
+        }
+      } else {
+        p.rollAngle = 0;
+      }
+
+      // Room Boundary Transitions (Flip-Screen Navigation)
+      if (p.x < 2) {
+        if (STATE.currentRoom === 0 && !STATE.puzzles.fireLit) {
+          STATE.currentRoom = 1;
+          p.x = 236;
+          p.y = 106;
+          updateBorderColor();
+        } else if (STATE.currentRoom === 2) {
+          STATE.currentRoom = 0;
+          p.x = 236;
+          p.y = 106;
+          updateBorderColor();
+        } else if (STATE.currentRoom === 3) {
+          STATE.currentRoom = 2;
+          p.x = 236;
+          p.y = 106;
+          updateBorderColor();
+        } else {
+          p.x = 2;
+        }
+      } else if (p.x + p.width > 254) {
+        if (STATE.currentRoom === 1) {
+          STATE.currentRoom = 0;
+          p.x = 8;
+          p.y = 106;
+          updateBorderColor();
+        } else if (STATE.currentRoom === 0 && STATE.puzzles.trollBribed) {
+          STATE.currentRoom = 2;
+          p.x = 8;
+          p.y = 106;
+          updateBorderColor();
+        } else if (STATE.currentRoom === 2 && STATE.puzzles.portcullisRaised) {
+          STATE.currentRoom = 3;
+          p.x = 8;
+          p.y = 106;
+          updateBorderColor();
+        } else if (STATE.currentRoom === 3) {
+          checkVictoryCondition();
+          p.x = 238;
+        } else {
+          p.x = 254 - p.width;
+        }
+      }
+
+      // Check Hazards & Coins
+      checkHazards();
+      checkCoins();
+    }
+
+    function updateBorderColor() {
+      const frame = document.getElementById('crtFrame');
+      const colors = [ZX.WHITE, ZX.MAGENTA, ZX.CYAN, ZX.BLUE];
+      if (frame) frame.style.borderColor = colors[STATE.currentRoom];
+    }
+
+    function checkHazards() {
+      const p = STATE.player;
+      if (p.isDead) return;
+
+      // 1. Fireplace in Room 0
+      if (STATE.currentRoom === 0 && STATE.puzzles.fireLit) {
+        if (p.x < 36 && p.y > 100) {
+          killPlayer("BURNT BY THE ROARING FIRE!");
+          return;
+        }
+      }
+
+      // 2. Rat Bite in Room 0
+      if (STATE.currentRoom === 0 && !STATE.puzzles.ratFed) {
+        if (Math.abs((p.x + p.width / 2) - STATE.puzzles.ratX) < 10 && p.y > 114) {
+          if (!p.isHurt) {
+            p.energy = Math.max(0, p.energy - 15);
+            p.isHurt = true;
+            p.hurtTimer = 45;
+            sound.playBite();
+            if (p.energy <= 0) killPlayer("KILLED BY A VICIOUS RAT!");
+          }
+        }
+      }
+
+      // 3. Castle Moat Water in Room 3
+      if (STATE.currentRoom === 3 && p.y >= 124 && p.x > 86 && p.x < 178) {
+        killPlayer("DROWNED IN THE CASTLE MOAT!");
+        return;
+      }
+
+      // 4. Snap Happy Gator in Room 3
+      if (STATE.currentRoom === 3 && !STATE.puzzles.alligatorTied) {
+        if (p.x + p.width > 116 && p.x < 152 && p.y > 116) {
+          killPlayer("CHOMPED BY SNAP HAPPY GATOR!");
+          return;
+        }
+      }
+    }
+
+    function checkCoins() {
+      const p = STATE.player;
+      STATE.coins.forEach(c => {
+        if (!c.collected && c.room === STATE.currentRoom && !c.hiddenInRailing) {
+          if (
+            p.x + p.width > c.x - 4 &&
+            p.x < c.x + 12 &&
+            p.y + p.height > c.y - 4 &&
+            p.y < c.y + 12
+          ) {
+            c.collected = true;
+            STATE.coinsFound++;
+            sound.playCoin();
+
+            for (let i = 0; i < 14; i++) {
+              STATE.particles.push({
+                x: c.x + 4, y: c.y + 4,
+                vx: (Math.random() - 0.5) * 1.5, vy: (Math.random() - 0.5) * 1.5,
+                color: ZX.BRIGHT_YELLOW, life: 25
+              });
+            }
+          }
+        }
+      });
+    }
+
+    function killPlayer(reason) {
+      const p = STATE.player;
+      p.isDead = true;
+      p.deathTimer = 75;
+      p.vx = 0;
+      p.vy = 0;
+      p.lives--;
+      sound.playDeath();
+
+      triggerDialog("ALAS, POOR DIZZY!", `${reason} You lose a life!`);
+    }
+
+    function respawnPlayer() {
+      const p = STATE.player;
+      if (p.lives <= 0) {
+        triggerDialog("GAME OVER", "You have run out of lives! Press R to restart your adventure.", () => {
+          resetGame();
+        });
+        return;
+      }
+
+      p.isDead = false;
+      p.isHurt = false;
+      p.energy = 100;
+      p.isRolling = false;
+      p.isClimbing = false;
+      p.rollAngle = 0;
+      p.vx = 0;
+      p.vy = 0;
+
+      if (STATE.currentRoom === 0) { p.x = 65; p.y = 106; }
+      else if (STATE.currentRoom === 1) { p.x = 220; p.y = 106; }
+      else if (STATE.currentRoom === 2) { p.x = 20; p.y = 106; }
+      else if (STATE.currentRoom === 3) { p.x = 20; p.y = 106; }
+    }
+
+    function checkVictoryCondition() {
+      if (STATE.coinsFound >= 5) {
+        STATE.puzzles.gameWon = true;
+        sound.playVictory();
+
+        triggerDialog(
+          "OLIVER TWINS",
+          "WELL DONE! You have solved all the puzzles, collected all 5 gold coins, and escaped the Castle Dungeons!",
+          () => {
+            // Victory screen
+          }
+        );
+      } else {
+        triggerDialog(
+          "CASTLE GATE",
+          `The castle boundary gate demands all 5 golden coins! You have only found ${STATE.coinsFound} of 5. Return and search the secret rooms!`
+        );
+      }
+    }
+
+    function resetGame() {
+      STATE.player.x = 65;
+      STATE.player.y = 106;
+      STATE.player.energy = 100;
+      STATE.player.lives = 3;
+      STATE.player.inventory = ["A Fresh Green Apple", null];
+      STATE.player.activeSlot = 0;
+      STATE.player.isDead = false;
+      STATE.player.isHurt = false;
+      STATE.player.isClimbing = false;
+      STATE.currentRoom = 0;
+      STATE.coinsFound = 0;
+      STATE.coins.forEach(c => {
+        c.collected = false;
+        if (c.id === 3) c.hiddenInRailing = true;
+      });
+      STATE.groundItems = [
+        { name: "A Jug of Cold Water", room: 0, x: 50, y: 120 },
+        { name: "A Stale Loaf of Bread", room: 0, x: 136, y: 120 },
+        { name: "A Heavy Boulder", room: 1, x: 152, y: 112 },
+        { name: "A Piece of Rope", room: 2, x: 184, y: 120 }
+      ];
+      STATE.puzzles = {
+        trollBribed: false,
+        trollX: 216,
+        trollFacing: -1,
+        trollWalkingOff: false,
+        fireLit: true,
+        ratFed: false,
+        ratX: 110,
+        ratDir: 1,
+        ratEating: false,
+        ratEatTimer: 0,
+        portcullisRaised: false,
+        portcullisY: 96,
+        wallSwitchDown: false,
+        alligatorTied: false,
+        alligatorJawOpen: false,
+        alligatorJawTimer: 0,
+        gameWon: false
+      };
+      STATE.dialog = null;
+      STATE.particles = [];
+      updateBorderColor();
+      sound.playChime();
+    }
+
+    // --- 10. NPC ANIMATIONS & PARTICLES ---
+    function updateEntities() {
+      // 1. Troll Guard
+      if (STATE.puzzles.trollWalkingOff) {
+        STATE.puzzles.trollFacing = 1;
+        STATE.puzzles.trollX += 0.8;
+        if (STATE.puzzles.trollX > 260) {
+          STATE.puzzles.trollWalkingOff = false;
+        }
+      }
+
+      // 2. Hungry Rat
+      if (!STATE.puzzles.ratFed) {
+        STATE.puzzles.ratX += STATE.puzzles.ratDir * 0.7;
+        if (STATE.puzzles.ratX > 175) STATE.puzzles.ratDir = -1;
+        if (STATE.puzzles.ratX < 50) STATE.puzzles.ratDir = 1;
+      }
+
+      // 3. Snap Happy Gator
+      STATE.puzzles.alligatorJawTimer++;
+      if (STATE.puzzles.alligatorJawTimer > 25) {
+        STATE.puzzles.alligatorJawTimer = 0;
+        STATE.puzzles.alligatorJawOpen = !STATE.puzzles.alligatorJawOpen;
+      }
+
+      // 4. Update Particles
+      for (let i = STATE.particles.length - 1; i >= 0; i--) {
+        const pt = STATE.particles[i];
+        pt.x += pt.vx;
+        pt.y += pt.vy;
+        pt.life--;
+        if (pt.life <= 0) STATE.particles.splice(i, 1);
+      }
+
+      // 5. Update Typewriter Dialog
+      if (STATE.dialog && STATE.dialog.progress < STATE.dialog.text.length) {
+        STATE.dialog.progress += 2;
+        if (STATE.dialog.progress % 4 === 0) sound.playBlip();
+      }
+    }
+
+    // --- 11. MAIN GAME RENDER & LOOP ---
+    function render() {
+      bctx.fillStyle = ZX.BLACK;
+      bctx.fillRect(0, 0, 256, 192);
+
+      // 1. Draw Room Background & Scenery (y: 0 - 143)
+      drawRoomScenery(bctx, STATE.currentRoom);
+
+      // 2. Room Title Header Banner
+      bctx.fillStyle = ZX.BLACK;
+      bctx.fillRect(0, 3, 256, 12);
+      bctx.fillStyle = ZX.CYAN;
+      bctx.fillRect(0, 15, 256, 1);
+      const title = ROOM_NAMES[STATE.currentRoom];
+      const titleX = Math.floor((256 - title.length * 8) / 2);
+      drawText(bctx, title, titleX, 5, ZX.BRIGHT_YELLOW);
+
+      // 3. Draw Ground Items
+      STATE.groundItems.forEach(it => {
+        if (it.room === STATE.currentRoom) {
+          drawItem(bctx, it.name, it.x, it.y);
+        }
+      });
+
+      // 4. Draw Coins
+      STATE.coins.forEach(c => {
+        if (!c.collected && c.room === STATE.currentRoom && !c.hiddenInRailing) {
+          drawCoin(bctx, c.x, c.y);
+        }
+      });
+
+      // 5. Draw NPCs
+      if (STATE.currentRoom === 0) {
+        if (STATE.puzzles.trollX < 260) {
+          drawTroll(bctx, STATE.puzzles.trollX, 114, STATE.puzzles.trollFacing);
+        }
+        if (!STATE.puzzles.ratFed) {
+          drawRat(bctx, STATE.puzzles.ratX, 126, STATE.puzzles.ratDir, STATE.puzzles.ratEating);
+        }
+      } else if (STATE.currentRoom === 3) {
+        drawAlligator(bctx, 134, 126, STATE.puzzles.alligatorTied, STATE.puzzles.alligatorJawOpen);
+      }
+
+      // 6. Draw Dizzy Player
+      drawDizzy(bctx, STATE.player);
+
+      // 7. Draw Particles
+      STATE.particles.forEach(pt => {
+        bctx.fillStyle = pt.color;
+        bctx.fillRect(Math.floor(pt.x), Math.floor(pt.y), 2, 2);
+      });
+
+      // 8. Draw ZX Spectrum HUD (y: 144 - 191)
+      drawHUD(bctx);
+
+      // 9. Draw Dialog Window if open
+      if (STATE.dialog) {
+        drawDialogBox(bctx);
+      }
+
+      // 10. Draw Grand Victory Overlay if Won!
+      if (STATE.puzzles.gameWon) {
+        drawVictoryBanner(bctx);
+      }
+
+      // 11. Blit Offscreen Canvas to Main Canvas (Crisp Integer Scaling)
+      ctx.drawImage(offscreen, 0, 0);
+    }
+
+    function drawVictoryBanner(ctx) {
+      ctx.fillStyle = ZX.BLACK;
+      ctx.fillRect(12, 20, 232, 104);
+      ctx.fillStyle = ZX.BRIGHT_YELLOW;
+      ctx.strokeRect(12.5, 20.5, 231, 103);
+      ctx.strokeRect(14.5, 22.5, 227, 99);
+
+      drawText(ctx, "* * * WELL DONE! * * *", 40, 28, ZX.BRIGHT_YELLOW);
+      drawText(ctx, "YOU ESCAPED THE CASTLE!", 36, 42, ZX.BRIGHT_WHITE);
+      drawText(ctx, "ALL 5 COINS COLLECTED!", 40, 54, ZX.BRIGHT_CYAN);
+
+      drawText(ctx, "FANTASY WORLD DIZZY", 52, 70, ZX.BRIGHT_GREEN);
+      drawText(ctx, "CODE BY THE OLIVER TWINS", 28, 82, ZX.WHITE);
+
+      if (Math.floor(Date.now() / 300) % 2 === 0) {
+        drawText(ctx, "[R] PLAY AGAIN", 72, 104, ZX.BRIGHT_YELLOW);
+      }
+    }
+
+    function gameLoop() {
+      updateEntities();
+      if (!STATE.dialog) {
+        updatePlayer();
+      }
+      render();
+      requestAnimationFrame(gameLoop);
+    }
+
+    // --- 12. INPUT HANDLERS (KEYBOARD & TOUCH) ---
+    window.addEventListener('keydown', (e) => {
+      sound.ensure();
+      STATE.keys[e.code] = true;
+
+      if (e.code === 'KeyU' || e.code === 'Enter') {
+        if (STATE.dialog) {
+          advanceDialog();
+        } else {
+          performAction();
+        }
+      }
+
+      if (e.code === 'KeyP') {
+        if (!STATE.dialog) {
+          pickUpOrDrop();
+        }
+      }
+
+      // Item Slot Selection (1 or 2)
+      if (e.code === 'Digit1') STATE.player.activeSlot = 0;
+      if (e.code === 'Digit2') STATE.player.activeSlot = 1;
+
+      // Toggle Mute (M)
+      if (e.code === 'KeyM') {
+        sound.toggleMute();
+      }
+
+      // Restart (R)
+      if (e.code === 'KeyR') {
+        resetGame();
+      }
+    });
+
+    window.addEventListener('keyup', (e) => {
+      STATE.keys[e.code] = false;
+    });
+
+    // Touch & On-Screen Button Binding
+    function bindTouchBtn(btnId, keyName) {
+      const el = document.getElementById(btnId);
+      if (!el) return;
+      const start = (e) => { e.preventDefault(); sound.ensure(); STATE.keys[keyName] = true; };
+      const end = (e) => { e.preventDefault(); STATE.keys[keyName] = false; };
+      el.addEventListener('mousedown', start);
+      el.addEventListener('mouseup', end);
+      el.addEventListener('mouseleave', end);
+      el.addEventListener('touchstart', start, { passive: false });
+      el.addEventListener('touchend', end, { passive: false });
+    }
+
+    bindTouchBtn('btnTouchLeft', 'btnLeft');
+    bindTouchBtn('btnTouchRight', 'btnRight');
+    bindTouchBtn('btnTouchJump', 'btnJump');
+    bindTouchBtn('btnTouchDown', 'btnDown');
+
+    const btnTouchUse = document.getElementById('btnTouchUse');
+    if (btnTouchUse) {
+      btnTouchUse.addEventListener('click', () => {
+        sound.ensure();
+        if (STATE.dialog) advanceDialog();
+        else performAction();
+      });
+    }
+
+    const btnTouchPick = document.getElementById('btnTouchPick');
+    if (btnTouchPick) {
+      btnTouchPick.addEventListener('click', () => {
+        sound.ensure();
+        if (!STATE.dialog) pickUpOrDrop();
+      });
+    }
+
+    const btnTouchSlot = document.getElementById('btnTouchSlot');
+    if (btnTouchSlot) {
+      btnTouchSlot.addEventListener('click', () => {
+        sound.ensure();
+        STATE.player.activeSlot = (STATE.player.activeSlot === 0) ? 1 : 0;
+      });
+    }
+
+    const btnTouchRestart = document.getElementById('btnTouchRestart');
+    if (btnTouchRestart) {
+      btnTouchRestart.addEventListener('click', () => {
+        resetGame();
+      });
+    }
+
+    // Start Game Loop
+    updateBorderColor();
+    requestAnimationFrame(gameLoop);
+  </script>
+</body>
+</html>
