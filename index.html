@@ -560,9 +560,9 @@
         // Upper brick ledge
         if (x <= 184 && curY <= 100) return 96;
         // Bunk bed shelves (one-way platforms when falling)
-        if (x >= 60 && x <= 126 && isFalling) {
-          if (curY <= 130) return 128;
-          if (curY <= 156) return 152;
+        if (x >= 58 && x <= 128 && isFalling) {
+          if (curY <= 138) return 128;
+          if (curY <= 164) return 152;
         }
         // Table (one-way platform when falling)
         if (x >= 134 && x <= 170 && curY <= 158 && isFalling) return 156;
@@ -704,6 +704,14 @@
       // Drop active item
       const item = STATE.inventory[STATE.activeSlot];
       if (item) {
+        if (room === 0 && !STATE.ratFed && item === 'bread' && Math.abs(p.x - STATE.ratX) < 45 && p.y <= 136) {
+          STATE.ratFed = true;
+          STATE.inventory[STATE.activeSlot] = null;
+          updateHud();
+          sound.trollChime();
+          showDialog("THE RAVENOUS RAT SCAMPERS\nOVER, DEVOURS THE BREAD,\nAND SCURRIES AWAY!");
+          return;
+        }
         STATE.inventory[STATE.activeSlot] = null;
         updateHud();
         showSpeech('DROPPED ' + ITEM_NAMES[item]);
@@ -756,15 +764,20 @@
           }
         }
 
-        if (!STATE.ratFed && Math.abs(p.x - STATE.ratX) < 30 && p.y <= 104) {
-          if (curItem === 'bread' || hasItem('bread')) {
-            STATE.ratFed = true;
-            removeItem('bread');
-            sound.coin();
-            showDialog("THE RAVENOUS RAT SCAMPERS\nOVER, DEVOURS THE BREAD,\nAND SCURRIES AWAY!");
-            return;
+        if (!STATE.ratFed && Math.abs(p.x - STATE.ratX) < 45) {
+          if (p.y <= 136) {
+            if (curItem === 'bread' || hasItem('bread')) {
+              STATE.ratFed = true;
+              removeItem('bread');
+              sound.trollChime();
+              showDialog("THE RAVENOUS RAT SCAMPERS\nOVER, DEVOURS THE BREAD,\nAND SCURRIES AWAY!");
+              return;
+            } else {
+              showDialog("A VICIOUS RAT PROWLS\nTHE BUNK SHELF!\nIT LOOKS VERY HUNGRY.");
+              return;
+            }
           } else {
-            showDialog("A VICIOUS RAT PROWLS\nTHE STONE LEDGE!\nIT LOOKS VERY HUNGRY.");
+            showDialog("YOU HEAR A HUNGRY RAT\nSCURRYING ON THE BUNK\nBED SHELF ABOVE!");
             return;
           }
         }
@@ -1143,6 +1156,8 @@
       STATE.fireExtinguished = false;
       STATE.trollBribed = false;
       STATE.ratFed = false;
+      STATE.ratX = 90;
+      STATE.ratDir = 1;
       STATE.portcullisRaised = false;
       STATE.gatorTied = false;
       STATE.player.x = 90;
@@ -1212,17 +1227,17 @@
 
         if (!STATE.ratFed) {
           STATE.ratX += STATE.ratDir * 0.4;
-          if (STATE.ratX > 140) STATE.ratDir = -1;
-          if (STATE.ratX < 80) STATE.ratDir = 1;
+          if (STATE.ratX > 112) STATE.ratDir = -1;
+          if (STATE.ratX < 72) STATE.ratDir = 1;
           const rImg = IMAGES['rat'];
           if (rImg && rImg.complete) {
             ctx.save();
             if (STATE.ratDir > 0) {
-              ctx.translate(STATE.ratX + 16, 92);
+              ctx.translate(STATE.ratX + 16, 120);
               ctx.scale(-1, 1);
               ctx.drawImage(rImg, 0, 0);
             } else {
-              ctx.drawImage(rImg, STATE.ratX, 92);
+              ctx.drawImage(rImg, STATE.ratX, 120);
             }
             ctx.restore();
           }
