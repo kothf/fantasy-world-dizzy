@@ -44,7 +44,7 @@ Built from scratch with zero external dependencies, images, or audio files — t
 ### 5. 🎒 Inventory System & Authentic Puzzles
 - **2-Slot Inventory:** Authentic item capacity with active slot swapping, ground drops, and pickups.
 - **Classic Puzzles:**
-  - 🍏 Bribe the Troll Guard with the fresh red apple.
+  - 🍏 Bribe the Troll Guard with the fresh green apple.
   - 🏺 Extinguish the fireplace fire pit with the cold water jug.
   - 🍞 Feed the hungry rat stale bread so it scurries away.
   - ⚙️ Flip the wall switch to raise the portcullis gate.

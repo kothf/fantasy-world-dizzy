@@ -14,9 +14,9 @@
     }
 
     body {
-      background-color: #0a0a10;
+      background-color: #06060c;
       background-image: 
-        radial-gradient(circle at 50% 30%, #18182a 0%, #06060a 100%),
+        radial-gradient(circle at 50% 30%, #151522 0%, #05050a 100%),
         repeating-linear-gradient(0deg, rgba(0,0,0,0.2) 0px, rgba(0,0,0,0.2) 2px, transparent 2px, transparent 4px);
       color: #d7d7d7;
       font-family: 'Courier New', Courier, monospace;
@@ -31,12 +31,12 @@
 
     /* Sinclair ZX Spectrum 48K Bezel */
     .spectrum-casing {
-      background: #16161e;
-      border: 4px solid #2a2a38;
+      background: #14141c;
+      border: 4px solid #282836;
       border-radius: 12px;
       box-shadow: 
-        0 0 40px rgba(0, 0, 0, 0.98),
-        inset 0 1px 2px rgba(255, 255, 255, 0.12);
+        0 0 35px rgba(0, 0, 0, 0.95),
+        inset 0 1px 2px rgba(255, 255, 255, 0.1);
       padding: 12px 14px;
       display: flex;
       flex-direction: column;
@@ -57,12 +57,12 @@
     }
 
     .brand-title {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 900;
       letter-spacing: 2px;
       color: #ffffff;
       text-transform: uppercase;
-      text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
     }
 
     .brand-sub {
@@ -77,7 +77,6 @@
       width: 80px;
       border-radius: 2px;
       overflow: hidden;
-      box-shadow: 0 0 6px rgba(255,255,255,0.2);
     }
     .rb-red { background: #ff0000; flex: 1; }
     .rb-yellow { background: #ffff00; flex: 1; }
@@ -88,48 +87,34 @@
     .crt-screen-frame {
       position: relative;
       background: #000000;
-      border: 8px solid #d7d7d7; /* Spectrum border color */
+      border: 8px solid #0000d7; /* Spectrum blue border */
       border-radius: 4px;
       overflow: hidden;
-      box-shadow: 
-        0 0 25px rgba(0, 0, 0, 0.95),
-        inset 0 0 20px rgba(0, 0, 0, 0.85);
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.9);
       width: 100%;
       max-width: 1024px;
       aspect-ratio: 4 / 3;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: border-color 0.2s;
+      transition: border-color 0.2s ease;
     }
 
     canvas#gameCanvas {
       display: block;
       width: 100%;
       height: 100%;
-      aspect-ratio: 4 / 3;
-      image-rendering: -moz-crisp-edges;
-      image-rendering: -webkit-crisp-edges;
       image-rendering: pixelated;
       image-rendering: crisp-edges;
+      background: #000000;
     }
 
-    /* CRT Scanlines */
-    .scanlines-overlay {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-      background-size: 100% 3px, 3px 100%;
-      pointer-events: none;
-      z-index: 10;
-    }
-
-    /* Keyboard / Info Legend */
-    .controls-panel {
+    /* HUD Bar below canvas */
+    .hud-bar {
       margin-top: 10px;
       width: 100%;
-      background: #111116;
-      border: 1px solid #242432;
+      background: #181824;
+      border: 2px solid #2e2e42;
       border-radius: 6px;
       padding: 8px 12px;
       display: flex;
@@ -137,92 +122,104 @@
       gap: 6px;
     }
 
-    .key-row {
+    .hud-row {
       display: flex;
+      justify-content: space-between;
+      align-items: center;
       flex-wrap: wrap;
-      align-items: center;
-      justify-content: center;
       gap: 8px;
-      font-size: 11px;
     }
 
-    .key-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      background: #191924;
-      border: 1px solid #363648;
+    .inv-slots {
+      display: flex;
+      gap: 12px;
+    }
+
+    .inv-slot {
+      background: #0a0a14;
+      border: 2px solid #555577;
       border-radius: 4px;
-      padding: 2px 6px;
-      color: #ffffff;
-    }
-
-    .key-badge kbd {
-      background: #272738;
-      border: 1px solid #50506c;
-      border-radius: 3px;
-      padding: 1px 5px;
+      padding: 4px 10px;
+      font-size: 12px;
       font-weight: bold;
       color: #ffff00;
-      font-family: monospace;
     }
 
-    /* On-Screen Touch Controls (Mobile Friendly) */
+    .inv-slot.active {
+      border-color: #00ffff;
+      color: #00ffff;
+      box-shadow: 0 0 8px rgba(0, 255, 255, 0.4);
+    }
+
+    .hint-text {
+      color: #ffaa00;
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    /* Touch Controls */
     .touch-controls {
-      display: none;
+      display: flex;
+      justify-content: space-between;
       width: 100%;
-      margin-top: 8px;
-      grid-template-columns: 1fr 1fr;
+      margin-top: 10px;
+      gap: 12px;
+    }
+
+    .touch-dpad, .touch-actions {
+      display: flex;
       gap: 8px;
+      flex-wrap: wrap;
     }
 
-    @media (max-width: 820px) {
-      .touch-controls {
-        display: grid;
-      }
-    }
-
-    .dpad-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 4px;
-    }
-
-    .action-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 4px;
-    }
-
-    .btn-touch {
-      background: #222232;
-      border: 1px solid #3e3e58;
+    .touch-btn {
+      background: #252538;
+      border: 2px solid #454562;
       border-radius: 6px;
       color: #ffffff;
       font-family: inherit;
-      font-weight: bold;
       font-size: 13px;
-      padding: 12px 4px;
-      text-align: center;
+      font-weight: bold;
+      padding: 10px 14px;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      touch-action: manipulation;
+      min-width: 54px;
+      text-align: center;
+    }
+    .touch-btn:active {
+      background: #44446a;
+      transform: translateY(1px);
+    }
+    .touch-btn.primary {
+      background: #0055aa;
+      border-color: #0088ff;
+    }
+    .touch-btn.accent {
+      background: #882200;
+      border-color: #ff5500;
     }
 
-    .btn-touch:active {
-      background: #383854;
-      transform: translateY(1px);
+    /* Keys Reference */
+    .keys-ref {
+      margin-top: 10px;
+      font-size: 11px;
+      color: #666688;
+      text-align: center;
+      line-height: 1.5;
+    }
+    .keys-ref span {
+      color: #ffff00;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
 
   <div class="spectrum-casing">
-    <!-- Sinclair ZX Spectrum Header -->
-    <header class="spectrum-header">
+    <!-- Header -->
+    <div class="spectrum-header">
       <div>
-        <span class="brand-title">Sinclair ZX Spectrum 48K</span>
+        <span class="brand-title">SINCLAIR ZX SPECTRUM 48K</span>
         <span class="brand-sub"> | Fantasy World Dizzy (1989)</span>
       </div>
       <div class="rainbow-stripe">
@@ -231,1955 +228,1023 @@
         <div class="rb-green"></div>
         <div class="rb-cyan"></div>
       </div>
-    </header>
-
-    <!-- Canvas Screen Area with Authentic Spectrum Border -->
-    <div id="crtFrame" class="crt-screen-frame">
-      <canvas id="gameCanvas" width="256" height="192"></canvas>
-      <div class="scanlines-overlay"></div>
     </div>
 
-    <!-- Controls / Guide Bar -->
-    <footer class="controls-panel">
-      <div class="key-row">
-        <div class="key-badge"><kbd>A</kbd> / <kbd>D</kbd> or <kbd>◀</kbd><kbd>▶</kbd> Walk</div>
-        <div class="key-badge"><kbd>W</kbd> / <kbd>SPACE</kbd> Somersault Jump / Climb</div>
-        <div class="key-badge"><kbd>S</kbd> / <kbd>▼</kbd> Climb Down / Pick Up</div>
-        <div class="key-badge"><kbd>P</kbd> Pick Up / Drop</div>
-        <div class="key-badge"><kbd>U</kbd> / <kbd>ENTER</kbd> Action / Use / Talk</div>
-        <div class="key-badge"><kbd>1</kbd> / <kbd>2</kbd> Select Item Slot</div>
-        <div class="key-badge"><kbd>M</kbd> Mute Audio</div>
-        <div class="key-badge"><kbd>R</kbd> Restart</div>
-      </div>
-    </footer>
+    <!-- Screen Frame -->
+    <div class="crt-screen-frame" id="screenFrame">
+      <canvas id="gameCanvas" width="256" height="192"></canvas>
+    </div>
 
-    <!-- Mobile Touch Controls -->
+    <!-- Status & Inventory Bar -->
+    <div class="hud-bar">
+      <div class="hud-row">
+        <div class="inv-slots">
+          <div class="inv-slot active" id="slot0">SLOT 1: A FRESH GREEN APPLE</div>
+          <div class="inv-slot" id="slot1">SLOT 2: (EMPTY)</div>
+        </div>
+        <div class="hint-text" id="actionHint">[SPACE] USE ITEM &nbsp;|&nbsp; [E] PICK/DROP &nbsp;|&nbsp; [TAB] SWITCH SLOT</div>
+      </div>
+    </div>
+
+    <!-- Touch / Mobile Controls -->
     <div class="touch-controls">
-      <div class="dpad-grid">
-        <div></div>
-        <button id="btnTouchJump" class="btn-touch">▲ JUMP</button>
-        <div></div>
-        <button id="btnTouchLeft" class="btn-touch">◀ WALK</button>
-        <button id="btnTouchDown" class="btn-touch">▼ DOWN</button>
-        <button id="btnTouchRight" class="btn-touch">WALK ▶</button>
+      <div class="touch-dpad">
+        <button class="touch-btn" id="btnLeft">◄ LEFT</button>
+        <button class="touch-btn" id="btnRight">RIGHT ►</button>
+        <button class="touch-btn primary" id="btnJump">▲ JUMP</button>
+        <button class="touch-btn" id="btnDown">▼ DOWN</button>
       </div>
-      <div class="action-grid">
-        <button id="btnTouchUse" class="btn-touch" style="background: #1b3838; border-color: #00d7d7; color: #00ffff;">[U] USE / TALK</button>
-        <button id="btnTouchPick" class="btn-touch" style="background: #38381b; border-color: #d7d700; color: #ffff00;">[P] PICK / DROP</button>
-        <button id="btnTouchSlot" class="btn-touch">[1/2] SWAP SLOT</button>
-        <button id="btnTouchRestart" class="btn-touch">🔄 RESTART</button>
+      <div class="touch-actions">
+        <button class="touch-btn accent" id="btnUse">★ USE</button>
+        <button class="touch-btn" id="btnPick">🎒 PICK/DROP</button>
+        <button class="touch-btn" id="btnSlot">⇄ SLOT</button>
+        <button class="touch-btn" id="btnMute">🔊 SOUND</button>
+        <button class="touch-btn" id="btnRestart">🔄 RESTART</button>
       </div>
+    </div>
+
+    <!-- Keyboard Reference -->
+    <div class="keys-ref">
+      <span>CONTROLS:</span> <span>[A/D]</span> or <span>[←/→]</span> or <span>[O/P]</span> Walk &bull;
+      <span>[W]</span> or <span>[↑]</span> or <span>[Q]</span> Jump &bull;
+      <span>[S]</span> or <span>[↓]</span> or <span>[A]</span> Climb Down &bull;
+      <span>[SPACE]</span> / <span>[ENTER]</span> Use Item / Advance Dialog &bull;
+      <span>[E]</span> / <span>[G]</span> Pick Up &amp; Drop &bull;
+      <span>[TAB]</span> Switch Slot &bull;
+      <span>[M]</span> Mute &bull;
+      <span>[R]</span> Restart
     </div>
   </div>
 
   <script>
-    /**
-     * FANTASY WORLD DIZZY (ZX Spectrum 1989 Recreation)
-     * Full self-contained 1-bit engine with zero external dependencies.
-     */
+    // --- 1. EMBEDDED AUTHENTIC ASSETS (OLIVER TWINS ZX SPECTRUM 1989) ---
+    const ASSETS_DATA = {"room_dungeon": "data:image/png;base64,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", "room_behind_fireplace": "data:image/png;base64,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", "room_entrance_hall": "data:image/png;base64,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", "room_moat": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAADABAMAAAAZw6BVAAAAJ1BMVEX////d3d3X19f//wDMzAAAzMwA1wAAzAD/AADMAAAAAP8AANcAAACYkxdaAAAPmUlEQVR42u1cvXLrOg5WfSZNeldq113alC7dprt1qvRu9AAu8gKaYXHrO/sGt4kdnzjcwUMt8UdCFJTIP0l2Zi8TWZRim+BH4AMIUmnAK/u2bfFol/s219NpmWogdfzd7/dc57PelIreopvp1W2q+Y9TYJlKm1/kNZ33+FpetOwHlf2wrh9OFa+txhULu6ZFLgb35pbqo7MRqPoIbm/H7wH73r2+7umHIHAR+LdTWq8fZ5eCndeWi0C7nCioloCnJb+0RVH0sq0+bBFzEfjLKTxe7bgLezaM9KIKvsTr5V7v0VH1vXzca8tFQIa1KtRNti8AlQQSJPhrBUjvG9n1tBX8nYpK87eU1ldZRABeGvxF9b0BrDU3L+n3pcEzHkka77Mtfqd+v23PFYD1GcYQtChAagVuWIokBP/SCx2t/2HC9F8fCPDnr88RIB6kLsPLC71w9xEBhiEdpAITzGIEyO2JAH82za9PEcARhhtG4Aa73TQoT4NVvk7HBwi0ZQhKeyJAk4pBoJ3qhQ4B9hYEhWY2AkWA0h4L8OevpkmgZASW0zogCGDnb3jw4XQETHssQIOQNEWACd4eIMAq8EKqWCHgf9bogGlPBEiY/NUMEPCdVAsNmeENKb2gwAg0fCAPuAJYKzDtkUm/3DT0awdsAoE92nnbQqFEHJeKCacQUMlse74A0whw222mY5QijfqQCd3PGlhHAiTkXnAIrbgTCBALY8i05AoxD1LkEvTwi0XAttfA+/MzmhRy2/v7cy1s1QuY6tzn79IvrdprYPu+TdpEv9vnLUeEkwjYA1+SunDnQI7JyIdRSqVqr3nfJomkvKcLUdiJXuyXc8pHCNTtJQG2yCUNigRbEqD9oBd+fKg3NH6c+CyNQNWeIEDqQHVBAK5eBgiU9tILPKMloXVjnRGALyj8pXV7DTy/Y32PwRzWGYGvEEDMtmoPzRBvMKGwGbbt1yAgSjBsr8kMV6ZOLXwNAkW1THuNzAWXhcP2yy/SgX3umGmvMSSf/8qc+QpwD3d3gMfr3d09/RHr6f6rXL6Wv/N79O/8efwbf4ewyMCpWAHAzF1xDkxffv96L192T78i1Os93nst1+Y95lrewfeKJ6nba3zPTV/+eu8L8Kr3XAGgFgDuSkTlTE7VOGH7bLz+4MsJ/gx5undfBMhDcgeTAogEhiNNew1bxvb5ffv+PNTWunfl3qsdArl3D58NQUHAtkcCbLd4Y7stPs8q4VgAo4RZMV8F7qK0opRZCQsCtj1HgKSt7dfywEiAcRD/Nb7A+9rGF/VLEHB9TDMV+XyFM5qNwHeWBh4f4e3x7UcObLt5e3x6Sr8/cmDbzePj49tPFWw7CfD09vRDBdtuGAD4kQPbbnAo4OlnfrDtJulikuCnfuCJzDDJ8jMHm+GboYUNdMfNcViTEvpUwmWsc1gNLrHtBu2x3Oq61DIc06nUuERqv7+Q99aDK2y7IRuwBRs/Qqc1BSE1HsOlENQIvLEVWASOG6CeH7WmpU8YRIhXReCJEYBaCaDbpNa1pioQQ0hSXBkBeGvQHrHLcnQd9p2VgGuqA1zCNRHAthsEgJqjA2E/AqpAqQkCqSQQrotA+mnQHo+5oBgbbHSjNYWgj5GO6yLwxDzQYct0oBqm2oZGg2sFgWQCCQHigxM54cANHw7rtb0uPIDGxkfqMvc+16wOoB2kptP5NE44+OfCA53+UNdx6KHUlAhJDZgPUBtOgYB7fMDz2iKgPJBHHjuMNbSADdY2YKygRyvoCQesxosRMDxA490h6oQ9shCZYVeoiJSAX/R8GgIHPq8tAsIDPN40CGgJpHrYPF5lJowEgvIBnMIJ6wP3uT5nHqDxZoPbYLMdX3TFFSUAcPQhKA5UZgNwWK0JADwnCPhseIDHG2XYIAJ0Bup+EUB73tPgIyNcygmGB3i8aRiQj9UR22iATUB7j34hnKoD43PmARn3IwUB2PmBI1YEQMY+db3HITkBgdXqsEplvVrBes3nMQ9syBltxo5YdQB7Ddz1yHU4QQvXVEgRDng94IEjOb6OHTANgnXEWQJuM5j6/CE4YGHoUY71kAdSt8kISY5NVzlibT+yKhTow6U6mHkAe7zJDvhYOWLRAXmN1Z1LlDDzABmgOGB2hNYRGzNAxQ8n08AkFRceQLtXB8x0fDzWOvAVJfMAOb5NJy+VI67NQWKBc+KCWgdyPMABgDjg2hEPi84P6HxqXFCVzANk9504YGSEgSMeFp0fnBUXjKxA5wVo9+h6jl2Oh7uN/yGOB8gn9P2pccFIBYQH2O434oCPlSOuVUDCY3WKfQiX8wDbfScOuBs64koH2CWGc+KCMQTKA2L36oCHjrhCwHZdCeH3w3kIFB7QKEj+8gEF9OoQqfuiA79/X8gDYvdzsJTQOEcHkRH44yIeULufY9EcFuBrH1UP4MwxMPEA2/0cdeK+F48g88WHi3gg2/08CCgWUBNIrwEeUvsPD5fwgNj9DAFKXMAGgBikAUjNn64HNh5gu+9nAUCvPE8gQkxNJyv44ww9UB5Qu4/9TDPg/vesASE8MAIPZ/OA2v0pnKZzJGSFByln80Byq5j/gVMc62B+YGMDiRfQXWv9dqJkHkDnyrH+/GLnBzZnoPECkZTUFxMl8wAKi19wigB2fmBjA40XIn0h13cTJfMAwnRydGXmBzZnoPECuauSW1zIpwbnzAM9qXR/0mzLzg9szkAdBOX0BrnFHdTnzANJzITUaQoca+8gsYHGC8HkFm9Ta4vdDupz5gEasVNNyMwPbGygdWpZfMVuAbfYbH3OPBDiZQlAmzPQeMHmFheL3QJ7XJ8LD0SKrc+eiVhO0Hjhdre41dziDju8Sz2vzpkHGIHpSPgkThAXuUgSaG4xYb4A7HF1LjyQdAdoRt6dh4DhBI0XCAHJLWKHAVWvOmceoA9TQuDMUbA5A4kXBAHKLeKIY4/rc+GB9KYjz43ObN9wgsQLiIDmFnHEk+JDfc48EFAAzk+dNQYDTpAzIqC5xTTi6XI3OhceQA3C7neXmMEgfwCkA5JbRLUj+6/OmQcQJsoQnG0H45KtAC0Cr7Hn1TnzALoNyhN3x+5aAggPkK/kqbxO6Uu9xAM4BBsywysjIFPJkCcyPbu9niqZB9BUOrjADKcQkNwiWSO57V7nc1QvPJBubboPpsRnIqDcwPQMZibD1cwD+GfMjFwzMcUIMCfweh/H8dR/iekLDySd4ITEpruqDggnhExSIfMm1TMPkDPawDUzc8qECLgJWKKtl3gABYLueEUdZB2YPS9Iw3TtHCQhMDc/cPGS7JkIFB6Ai3cmnIDAepwfiAHidyFwyBlrMy+4/gBMI3CA1XqUH0Ae+C4EcNVolB9I/AjhmxBYr9erQ50fuM4i4CwEDuu12cWgPMCZpm9B4LCyCGQeuHxzyHwdSBisah7oI3ybDhxw+XDEA19AhVM6cFitYDXigfiNTLg6HNYjHoj9t+nAelWGwPBAuLo7nNSBQx4BwwOU1Pp+b2jzhJyh4YCku0ZgMoVAT/P1igcwq4YZMsnYdmdP0WYgEI0AmQco69sDL1zh/OgKEExagbF4My/AFEWg1UtE4Ti5aHddHSj5AcBMZcB1G1q56o6XD8IkAiYdmnlANgjpquXxGgLMswLhAdyhhTkmnJ8S/leYIk0hYJWwzAtS/zHBzduIuiTF5vitPEDrD72smOAQ4YGztAuOSR0wOdnCA5HWwoOm/XH5Ag3hkmMageDMC4gKUQCppUHpLiyzECjxAO0F6HnqTMmLfsNbic4+Fjv4FIGynxAThZjHoLUHzup0sr3x3GMeArpegKnGwHNkWWGIvKPo/J85CJT9A6h3tMJC2RxeCbvQCqazmgaBnCfkqJgCI85qXT1Cm0AgzwvQ9okEmKmjmESshR8HTv69kg+cxwPJFVJY2FMaj+Tone1a0ZlDevdsPnAeD2DyKvBSHy08CSHUM7a5CNh84CweQK3nTdOUw+M1R8nmVZ40ON41TC3hsF3N4AFsnFZaeZYqK7F0UQkAjgDjezYfOIsHKJNGzzCwiEKGIdSbBr0HHJx7Nh84iwc4kdvTHh2K0SMvwEI1XfAm0f69aDa4zOCB0lFZgef+R6i00FvejifvZXN4gCAzZsvD1w9XY05AwNtP8GGeULYA5HeyEsgCnG3M2Urr3jN7DZ3nk1aapir7iGLkTwSepIoSQ502iJ7Ge5bh7CewaarR8wUEUwjyAexVZMdYa/FMK7B7DXU/gc3TrWRjs+EBwUwVN+9TjHVj0REgjlXALKTLfgI7P4cVz9DLPqJM/bJjm1kswoiKP7Sq2gwH+wmMAJSqGvKAcD/qAreroAU4Rwm9/QQlP5AAAE6UmfxA2YHBYx/ExVQCxOCYYfB0IO81tPsJRIBDEmA1zA/wMnvPi+/AEDgqEB2D9u7ZvYa6n0D5gJ6uWAkCef9AENjy+jdw8jbMcL29h0rZa5j3HwofcIqKESj5AdmtK3YfdaUpzgk+PGdk9hqqZisf2CEo8wKI1vlHtq7x1jI/IPGtIO81lP0EeU/RGlWQraDMC8gdZ+dNa73gjK0LtyOU3WuY9x/qniLigVXFA9GON/NycHMLMEsAu9cwP5egzyse6HGTYTzQWyB5jupnr2cKYPcamv2Hsv90pY8ZGR5Qb1wW2UNwx9bzBQ4PmL2Ghhv0ecXsDUs80A+BJgSSVDK5u9UzBh+je0mo+t54r2Fwn1c06wWhKHTsZWtaurpN07vd7W7H5wUhMO/eYK9hH3r3ecWyXhB0EEgA9KXIhgG3O90uuHN4RmOt76Fe1PdGew15SEfPK5r8AEosuk8KQCMbadfTQrbfpToFHzPuDfYaglL8+HnFsl4gs0HegsgKEHk9mb+Vth1lKxjci869wb4itX/neUW7n1CsgEhIvSIOiPbLBh+De0JOg3vOXsPgPq9Y1gvKc3QcQ0D0nmbzaNelrMFeQ2EE53lFs24YRTlxTiL71521RC/4wADyo1mA2r/7vGLJE4a+IEBL2eIVhzN8NyCpINA9xUprav/e84p2P6EGrxHKhICM1lJy/NxBUaM2P5Dt33lescwL8K3EPYgRBySEgPDRx9NzGIpIClfyA2r/3vOKZv+AjFCvCBS3bL2S7w0rx0AJt5IfUPv3nlfMPBA5NRF0TyYwB0hYXyTww3KjhEIig/xADnbHzyua/QNqotS46DqRY7Qh7acpGgIgGwv1Ndu/8oJli8IDvYZkpHv0lZizYgc+W4Aog2/zA2r/3vOKJU/Ys+5FMx+MQWa5nyBg4wHOLFUT2qlEhcYD//w/ov+V/0cE/+f/jwj++X9ETz/2/4j+C7ovU25lNGTSAAAAAElFTkSuQmCC", "egg_life": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAICAIAAACkr0LiAAAALUlEQVR42mPYv38/AwMDLhInYISz/v+HCcHEmNAkkNlMeMxkQtOErJWQPlwAAH+fFTUyGtKLAAAAAElFTkSuQmCC", "dizzy_idle": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAVCAYAAABc6S4mAAAAt0lEQVR42qWUQRLFIAhDfY73v3L+pnb6W5SorAQ1kYBQPFMQw7noHJL0xQes+3UH/NoYZWYTDMFXSKqlI3RJ/taO1ez1I7Aez7KwMnhLlUm3JdHMd9tUOy8ckN5O68Ba+T3Jb+SxrEr6LCvyiOjCVHMKHIG5MqJXAkwAgDIZGx8lKKU04sLLadcPT8BBVrMZ6EM6jqbpyTRmARwjvkSgAIVJfG9UcKDt7JwUtFP3iTViOQNtVP1tP/UXVh6HGueLAAAAAElFTkSuQmCC", "dizzy_walk_0": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAVCAYAAABc6S4mAAAAo0lEQVR42rVVSRKAIAxrOv7/y/EiDqKlYbE3C5ONaYXlxY8eTKzsIsk3PgCZxEfBr4PImUwQgo+SeDc/oMQxXa6oj0gUF275K293IKmfJbj11sA9F1lMR6S6Bm2/lyLCh2KS01G5NO47HbDJPwPP1gaiOSgkK+C9Q+4Al7bp6kbOJ/nJgrpHQUQ/ouBy0Ic6aIx+YfxrDoQIMEIACK8PAdzM7ATVHVQZMp2DDgAAAABJRU5ErkJggg==", "dizzy_walk_1": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAVCAYAAABc6S4mAAAAqUlEQVR42q1VSxLFMAgS593/yrxNO83kUyGNiywaBwSNRdTByTeEGFUiyREfgEySLvh1sVImEyzBXZIMMwDcFsWugmX1PbCiwlZQWXfEIit/KPA5p8Du2KZaNckgaStIFbztgUPyG/CmBpW9wLEmt0qUiUoFqK22t2x32bGfmH6KGlJ82qYft/HQ5Dcguv+CKpl8R8exVcEL7SaiZp83pmyIwiDZfgdq/AEN9VUUvG/z5gAAAABJRU5ErkJggg==", "dizzy_walk_2": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAVCAYAAABc6S4mAAAAp0lEQVR42q1UWw7AIAizxPtfmf1oYkSlJeNrc0tfIGh5+eEMjazsR3eP+ABoElPBx4ebM5rgCq6SWBMLwIyoVR1c1e/AjAvZQRbdLxEpLiwIJNWzfeiq+p0ki8yq4NNR5sQCziMeZTxLTd5JmIh6ZUwnyfIMddl5NvOLE1S2KXubUFsVg8E3II/ArioIoZyQsLwjcZJO0XSCQn7SPXjYh9oDgOgeyCZ/GAtWG972KOUAAAAASUVORK5CYII=", "dizzy_walk_3": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAVCAYAAABc6S4mAAAAvUlEQVR42rVUQRLEIAwSx/9/mT3s6jhRFN22R5uQQEhSevmDEcPLPCuQ5IgPwC6ST8F/PxQzu4AEPy2Sj4cGVInSLQPZfQR2WOSNW5Q0rttagZpGGhLNWCg2xQFddQ+gvfPrXfYWznx4cxnkunJRZLVyVZmtNjcyndg04sFZMnE2ODtBJdyUf0aC3WPrvEqwYtLJBKfqAAXPLX2cZKDAIeesO8VskwdPUM9DiqZycpPUS5AGVQygOnRl2s3gA8rpYwdXuX3BAAAAAElFTkSuQmCC", "troll": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAoCAYAAACfKfiZAAABxklEQVR42r1XUa7EIAhU0yNx/xNwp+5PfaHsAEO3eSYbu7UqDMyIY7BNx5n2/9J0nH8/1oi2gdGEanPb+29f8xQ9+41fgTmLfZUTTejX1xsZEy4mY7bChb4HbbaR2QbaPjNIGnuk1MsSC70nQzBpj603aAx57edROZDF03tqx/wme+ynEGRUy1jQoOOk6ChkqBBij5MRwV1RL0OuhUykgswh1Ry/c9pD1ZFWpAuEQK2SVmhB+w7FPvIcrLXaGhBJbbV5EIoVelR5XMGODAZGLCq2SHTYnMmQKrWboVw2Lzs3rrGVTtyeeiWMzoCOqH2tESVOVHJlYsWckqED0RH8ZkGazkUGZJR6GorreT4qpbOqqNmOUC594kQlWeQsGBNAw5lqNouEWXhvLAAVNMYdHEycZUzVcYoz5PaJGRMqbIhmAQvU9Pvnvbfvd39QMowQKXLBeygXQhE6P1VG3nvkOfqvOs7Vuox4KS3yQ4mxg1axBtdRtntjdkiOV0qtIv6eAbZfdB0QwZkYFjGidzMijBDH7UiMUBgWRcMqDIXqWQrWN6PsGl5ogTq+M3mySvll7n7bWwB/lpB3BBDtUK0vwWXGPSvJjg+ngyEEzOijswAAAABJRU5ErkJggg==", "jug": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAASCAYAAABSO15qAAAAgklEQVR42rWRURLAMARElzO5/wncKf1qR1lp2kz9yBDPAgAA9wH3gVUL/+UKmEmBmAktDia3BIMwC/+0BFnXGEt5XZ6ZgSmAjTAZTadyf1Nwvs3kvYJQXBV0s+YLhSba3pkpIHB9PFuGNcusS8y+WbBMISsL3jVxYGxTTsgnv1UM4ADRHndXdEXVOAAAAABJRU5ErkJggg==", "bread": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAJCAYAAAA7KqwyAAAAVUlEQVR42pVRQQ7AMAiCvon/v8A/daeaZVHpTIxGC6IlAERg42MSeOpTzgr8h2QkuLElgRLYKZjA2e9UOHXZj8Cu/P2oi8tNOAeroiWYwPkLbl+n4AFLR2GI+CSmbgAAAABJRU5ErkJggg==", "apple": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAVElEQVR42qWQUQqAMAxDX4b3v96OUz+UTexihT3oxyDJmkIm7lnSkrgDfRgTeiVXmvGIQq7nSl48/w3X4cqS9x8mkb9XKmmAvlZYlcaa5M/qGohdTmAjDsOqRcIaAAAAAElFTkSuQmCC", "rope": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAMCAYAAABSgIzaAAAAU0lEQVR42sWQOw4AIAhDKfH+V8bF4IeKxsVuVB80hUTZMoP8CaaZzRwACmsGNZOl8E0OtQsrGC6DQNv447vKo8pFq5K1SovJ2tXu4xqiRRySfVQFdh4iELs0TUsAAAAASUVORK5CYII=", "boulder": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAARCAYAAADQWvz5AAAAh0lEQVR42q2UUQoAIQhEx87U/U/QndovQVxHh2WDKExf6kTAT8Mq4wFuZd/EHwCWAnEAu+AFio4evAE7wJ1gNpWTYe5XlnmA6zNC4xrPo42CFCjtaQ6cgivQYqqoGVH5mfRZPUwpqmvem/oYq4tpdlWjR6W6ErvGSpD2sX0BMVgHMUVJ5Rt5AKaOe0lpXTVTAAAAAElFTkSuQmCC", "coin": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAPCAYAAAACsSQRAAAAlklEQVR42qVSQQ7AIAirxif1/y/gT+6gLkgKWTIOmlkGLRQwTPyMkQEminMdTWRjejZmmJawy7ARk7g7SSYO48VoJ5u7Vcf47vEOoqHoqr6l3MiimoNi06sV20dsVAmVBBLtvMkiFF6IW7uZJIONiZQmO9vZTlQeiT8qSW8RZWVfyOtXsaRsSRYGVoVn2b1rKaRUQz7xAOx4hEtOlZcaAAAAAElFTkSuQmCC", "fire_0": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAcCAYAAAB75n/uAAAA3klEQVR42u1VQQ7DMAhzqj2J/78gf9pOSJFlBzIp2mVc2lAHTAMO5sQbANQz39mcX9nDjggMDrCumUgrAQeIwHDrJHFcgWIegZF+xbhTzZNsFNPcuPodkdYZrIzcph0Rm4AZuqCKeXnYri3Z79q5PORkzJ2jKlL+ViJmrrrG+aqhfNQHx5qTqepR9fKOlTonhV8xr45UVO26m4tSKlSAE3wpFa6junOxlQoX+ATfkgo3XBW+lAoWO9WWO7ycg1V3nC6d4O0v6FyZHfzAnO379TvLBLee95P8K/h9BZftA9Ri3icBW1GIAAAAAElFTkSuQmCC", "fire_1": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAcCAYAAAB75n/uAAAAt0lEQVR42u1UQQrAIAzL/v81/+QOYyC1TVpFdlkvikRjYg060AHAG1t75raidTDwuOk93JK+OEY+VXSYXR/xllQq8GzxFFnFaTKmwN582ybm/bICZoM6VCrxNnvrEWmpGJnqKmmPekDVsqGiqFuY1yUlmQdll5FdVYmDpfhgXcLiI/0vlMyqLa6SzCfbwU99ng06hS8H3hI+yv8oyKp42ars52fwF1qrh1Yx4frR8TzJr+B7BYfrBulnlrrW+GXKAAAAAElFTkSuQmCC", "rat": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAICAYAAADwdn+XAAAAQUlEQVR42mNkwAT/GbADRmIE////j10/IyMjVkMYidGMZggKYMGmGaYQm4Ho6piIsQUfYMFnAw5v4LThP5E0dQEAZfobCCTPBmoAAAAASUVORK5CYII=", "gator": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAfCAYAAAA4AJfRAAAArklEQVR42q1U2xHAIAiLzOT+E7iT/bKHFIR49QftNSQ8G7IzMLd3R0PpaKB1Ahy8XDMucMIstHwKPDAjyTm4o0XMuVRry8xL8nXMh8RxYIp5Sb7KtpbpOOBLpe5y2121mA9DIWmDLGCpy6LOSibsO4oeIGxXDxgxumDGUjFHIR0dePeB2UrLTo+m6jjZaqlrmtX1JWBqu1nLQGRcPvHpEH5dfOablLZIaQHanxPpDz2oqHoyOeSZAAAAAElFTkSuQmCC", "switch_up": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAYAAAAWo42rAAAAMklEQVR42s2PIQ4AIBDDCuH/Xy5+h0AAoWpZOjEIFBWz72xyW1SXGRi5bPXHX2eeiueZgpMNDeFS47IAAAAASUVORK5CYII=", "switch_dn": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAOCAYAAAAWo42rAAAAM0lEQVR42s2OMQoAIBDDUv//57gJp4s4qN1KSij8n5SmVprB267xwlCC0/XHH5coKh4bO+lhCwzMT8NZAAAAAElFTkSuQmCC"};
 
-    // --- 1. SINCLAIR ZX SPECTRUM 15-COLOR PALETTE ---
-    const ZX = {
-      BLACK:         '#000000',
-      BLUE:          '#0000D7',
-      RED:           '#D70000',
-      MAGENTA:       '#D700D7',
-      GREEN:         '#00D700',
-      CYAN:          '#00D7D7',
-      YELLOW:        '#D7D700',
-      WHITE:         '#D7D7D7',
-      // Bright variants
-      BRIGHT_BLACK:  '#000000',
-      BRIGHT_BLUE:   '#0000FF',
-      BRIGHT_RED:    '#FF0000',
-      BRIGHT_MAGENTA:'#FF00FF',
-      BRIGHT_GREEN:  '#00FF00',
-      BRIGHT_CYAN:   '#00FFFF',
-      BRIGHT_YELLOW: '#FFFF00',
-      BRIGHT_WHITE:  '#FFFFFF'
-    };
-
-    // --- 2. COMPLETE SINCLAIR ZX SPECTRUM 8x8 BITMAP FONT ---
-    const FONT_HEX = {
-      ' ': "0000000000000000", '!': "1010101010001000", '"': "2828280000000000",
-      '#': "28287c287c282800", '$': "103c503814781000", '%': "60640810204c0600",
-      '&': "2050502054483400", "'": "1010200000000000", '(': "0810202020100800",
-      ')': "2010080808102000", '*': "0028107c10280000", '+': "0010107c10100000",
-      ',': "0000000000101020", '-': "0000007c00000000", '.': "0000000000303000",
-      '/': "0204081020408000", '0': "38444c5464443800", '1': "1030101010103800",
-      '2': "3844040810207c00", '3': "3844041804443800", '4': "081828487c080800",
-      '5': "7c40780404443800", '6': "1820407844443800", '7': "7c04081020202000",
-      '8': "3844443844443800", '9': "3844443c04083000", ':': "0030300030300000",
-      ';': "0030300030102000", '<': "0810204020100800", '=': "00007c007c000000",
-      '>': "2010080408102000", '?': "3844040810001000", '@': "3844045c54543800",
-      'A': "3844447c44444400", 'B': "7844447844447800", 'C': "3844404040443800",
-      'D': "7048444444487000", 'E': "7c40407840407c00", 'F': "7c40407840404000",
-      'G': "3844404c44443800", 'H': "4444447c44444400", 'I': "3810101010103800",
-      'J': "0c04040404443800", 'K': "4448506050484400", 'L': "4040404040407c00",
-      'M': "446c544444444400", 'N': "4464544c44444400", 'O': "3844444444443800",
-      'P': "7844447840404000", 'Q': "3844444454483400", 'R': "7844447850484400",
-      'S': "3844403804443800", 'T': "7c10101010101000", 'U': "4444444444443800",
-      'V': "4444444428281000", 'W': "44444454546c4400", 'X': "4444281028444400",
-      'Y': "4444281010101000", 'Z': "7c04081020407c00", '[': "3820202020203800",
-      '\\':"8040201008040200", ']': "3808080808083800", '^': "1028440000000000",
-      '_': "0000000000007c00", '`': "2010000000000000", 'a': "000038043c443c00",
-      'b': "4040784444447800", 'c': "0000384440443800", 'd': "04043c4444443c00",
-      'e': "000038447c403c00", 'f': "0c103c1010101000", 'g': "00003c44443c0438",
-      'h': "4040784444444400", 'i': "1000301010103800", 'j': "04000c0404044438",
-      'k': "4040485060504800", 'l': "3010101010103800", 'm': "0000745454444400",
-      'n': "0000784444444400", 'o': "0000384444443800", 'p': "0000784444784040",
-      'q': "00003c44443c0406", 'r': "0000586040404000", 's': "0000384038047800",
-      't': "10103c1010140800", 'u': "00004444444c3400", 'v': "0000444428281000",
-      'w': "0000444454542800", 'x': "0000442810284400", 'y': "000044444c340438",
-      'z': "00007c0810207c00", '{': "0c10102010100c00", '|': "1010101010101010",
-      '}': "3008080408083000", '~': "324c000000000000"
-    };
-
-    const FONT_BITS = {};
-    for (const char in FONT_HEX) {
-      const hex = FONT_HEX[char];
-      const rows = [];
-      for (let r = 0; r < 8; r++) {
-        rows.push(parseInt(hex.substr(r * 2, 2), 16));
-      }
-      FONT_BITS[char] = rows;
+    const IMAGES = {};
+    for (const [key, dataUrl] of Object.entries(ASSETS_DATA)) {
+      const img = new Image();
+      img.src = dataUrl;
+      IMAGES[key] = img;
     }
 
-    function drawChar(ctx, char, x, y, color) {
-      const rows = FONT_BITS[char] || FONT_BITS['?'];
-      ctx.fillStyle = color;
-      for (let r = 0; r < 8; r++) {
-        const byte = rows[r];
-        for (let c = 0; c < 8; c++) {
-          if ((byte >> (7 - c)) & 1) {
-            ctx.fillRect(x + c, y + r, 1, 1);
+    // --- 2. BIT-PERFECT SINCLAIR ZX SPECTRUM 8x8 FONT ---
+    const ZX_FONT = {
+      ' ': [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
+      'A': [0x00, 0x3c, 0x42, 0x42, 0x7e, 0x42, 0x42, 0x00],
+      'B': [0x00, 0x7c, 0x42, 0x7c, 0x42, 0x42, 0x7c, 0x00],
+      'C': [0x00, 0x3c, 0x42, 0x40, 0x40, 0x42, 0x3c, 0x00],
+      'D': [0x00, 0x78, 0x44, 0x42, 0x42, 0x44, 0x78, 0x00],
+      'E': [0x00, 0x7e, 0x40, 0x7c, 0x40, 0x40, 0x7e, 0x00],
+      'F': [0x00, 0x7e, 0x40, 0x7c, 0x40, 0x40, 0x40, 0x00],
+      'G': [0x00, 0x3c, 0x42, 0x40, 0x4e, 0x42, 0x3c, 0x00],
+      'H': [0x00, 0x42, 0x42, 0x7e, 0x42, 0x42, 0x42, 0x00],
+      'I': [0x00, 0x3e, 0x08, 0x08, 0x08, 0x08, 0x3e, 0x00],
+      'J': [0x00, 0x02, 0x02, 0x02, 0x02, 0x42, 0x3c, 0x00],
+      'K': [0x00, 0x44, 0x48, 0x70, 0x48, 0x44, 0x42, 0x00],
+      'L': [0x00, 0x40, 0x40, 0x40, 0x40, 0x40, 0x7e, 0x00],
+      'M': [0x00, 0x42, 0x66, 0x5a, 0x42, 0x42, 0x42, 0x00],
+      'N': [0x00, 0x42, 0x62, 0x52, 0x4a, 0x46, 0x42, 0x00],
+      'O': [0x00, 0x3c, 0x42, 0x42, 0x42, 0x42, 0x3c, 0x00],
+      'P': [0x00, 0x7c, 0x42, 0x42, 0x7c, 0x40, 0x40, 0x00],
+      'Q': [0x00, 0x3c, 0x42, 0x42, 0x42, 0x4a, 0x3c, 0x02],
+      'R': [0x00, 0x7c, 0x42, 0x42, 0x7c, 0x48, 0x44, 0x00],
+      'S': [0x00, 0x3c, 0x42, 0x30, 0x0c, 0x42, 0x3c, 0x00],
+      'T': [0x00, 0x7e, 0x08, 0x08, 0x08, 0x08, 0x08, 0x00],
+      'U': [0x00, 0x42, 0x42, 0x42, 0x42, 0x42, 0x3c, 0x00],
+      'V': [0x00, 0x42, 0x42, 0x42, 0x42, 0x24, 0x18, 0x00],
+      'W': [0x00, 0x42, 0x42, 0x42, 0x5a, 0x66, 0x42, 0x00],
+      'X': [0x00, 0x42, 0x24, 0x18, 0x18, 0x24, 0x42, 0x00],
+      'Y': [0x00, 0x42, 0x42, 0x24, 0x18, 0x18, 0x18, 0x00],
+      'Z': [0x00, 0x7e, 0x04, 0x08, 0x10, 0x20, 0x7e, 0x00],
+      '0': [0x00, 0x3c, 0x46, 0x4a, 0x52, 0x62, 0x3c, 0x00],
+      '1': [0x00, 0x18, 0x28, 0x08, 0x08, 0x08, 0x3e, 0x00],
+      '2': [0x00, 0x3c, 0x42, 0x04, 0x18, 0x20, 0x7e, 0x00],
+      '3': [0x00, 0x3c, 0x42, 0x04, 0x1c, 0x02, 0x3c, 0x00],
+      '4': [0x00, 0x08, 0x18, 0x28, 0x48, 0x7e, 0x08, 0x00],
+      '5': [0x00, 0x7e, 0x40, 0x7c, 0x02, 0x42, 0x3c, 0x00],
+      '6': [0x00, 0x3c, 0x40, 0x7c, 0x42, 0x42, 0x3c, 0x00],
+      '7': [0x00, 0x7e, 0x02, 0x04, 0x08, 0x10, 0x10, 0x00],
+      '8': [0x00, 0x3c, 0x42, 0x3c, 0x42, 0x42, 0x3c, 0x00],
+      '9': [0x00, 0x3c, 0x42, 0x42, 0x3e, 0x02, 0x3c, 0x00],
+      '\'': [0x00, 0x18, 0x18, 0x08, 0x00, 0x00, 0x00, 0x00],
+      ':': [0x00, 0x00, 0x18, 0x18, 0x00, 0x18, 0x18, 0x00],
+      '.': [0x00, 0x00, 0x00, 0x00, 0x00, 0x18, 0x18, 0x00],
+      '!': [0x00, 0x18, 0x18, 0x18, 0x18, 0x00, 0x18, 0x00],
+      '?': [0x00, 0x3c, 0x42, 0x04, 0x08, 0x00, 0x08, 0x00],
+      '-': [0x00, 0x00, 0x00, 0x7e, 0x00, 0x00, 0x00, 0x00],
+      ',': [0x00, 0x00, 0x00, 0x00, 0x00, 0x18, 0x18, 0x10],
+      '/': [0x00, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x00],
+      '(': [0x00, 0x0c, 0x18, 0x18, 0x18, 0x18, 0x0c, 0x00],
+      ')': [0x00, 0x30, 0x18, 0x18, 0x18, 0x18, 0x30, 0x00],
+      '[': [0x00, 0x3c, 0x30, 0x30, 0x30, 0x30, 0x3c, 0x00],
+      ']': [0x00, 0x3c, 0x0c, 0x0c, 0x0c, 0x0c, 0x3c, 0x00]
+    };
+
+    function drawZxText(targetCtx, text, startX, startY, color) {
+      targetCtx.fillStyle = color;
+      let curX = Math.round(startX);
+      const curY = Math.round(startY);
+      const upper = String(text).toUpperCase();
+      for (let i = 0; i < upper.length; i++) {
+        const ch = upper[i];
+        const bitmap = ZX_FONT[ch] || ZX_FONT[' '];
+        for (let row = 0; row < 8; row++) {
+          const b = bitmap[row];
+          for (let col = 0; col < 8; col++) {
+            if (b & (128 >> col)) {
+              targetCtx.fillRect(curX + col, curY + row, 1, 1);
+            }
           }
         }
+        curX += 8;
       }
     }
 
-    function drawText(ctx, str, x, y, color = ZX.BRIGHT_WHITE) {
-      for (let i = 0; i < str.length; i++) {
-        drawChar(ctx, str[i], x + i * 8, y, color);
-      }
-    }
-
-    // --- 3. 1-BIT WEB AUDIO BEEPER SYNTHESIZER ---
+    // --- 3. 1-BIT BEEPER WEB AUDIO API SYNTHESIZER ---
     class BeeperAudio {
       constructor() {
         this.ctx = null;
         this.muted = false;
-        this.masterGain = null;
-      }
-
-      init() {
-        if (this.ctx) return;
-        try {
-          const AudioContext = window.AudioContext || window.webkitAudioContext;
-          this.ctx = new AudioContext();
-          this.masterGain = this.ctx.createGain();
-          this.masterGain.gain.setValueAtTime(0.22, this.ctx.currentTime);
-          this.masterGain.connect(this.ctx.destination);
-        } catch (e) {
-          console.warn("Web Audio not supported:", e);
-        }
       }
 
       ensure() {
-        if (!this.ctx) this.init();
-        if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
       }
 
       toggleMute() {
         this.muted = !this.muted;
-        if (this.masterGain && this.ctx) {
-          this.masterGain.gain.setValueAtTime(this.muted ? 0 : 0.22, this.ctx.currentTime);
-        }
         return this.muted;
       }
 
-      // Classic Jump chirp (Frequency sweep up)
-      playJump() {
+      playTone(freq, duration, type = 'square', endFreq = null) {
         if (this.muted) return;
         this.ensure();
         if (!this.ctx) return;
-        const t = this.ctx.currentTime;
+
+        const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
-        const g = this.ctx.createGain();
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(440, t);
-        osc.frequency.exponentialRampToValueAtTime(1400, t + 0.08);
-        g.gain.setValueAtTime(0.2, t);
-        g.gain.exponentialRampToValueAtTime(0.01, t + 0.08);
-        osc.connect(g);
-        g.connect(this.masterGain);
-        osc.start(t);
-        osc.stop(t + 0.08);
+        const gain = this.ctx.createGain();
+
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, now);
+        if (endFreq) {
+          osc.frequency.exponentialRampToValueAtTime(Math.max(10, endFreq), now + duration);
+        }
+
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.setValueAtTime(0.12, now + duration - 0.005);
+        gain.gain.linearRampToValueAtTime(0.0001, now + duration);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + duration);
       }
 
-      // Landing click
-      playLand() {
-        if (this.muted) return;
-        this.ensure();
-        if (!this.ctx) return;
-        const t = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const g = this.ctx.createGain();
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(120, t);
-        osc.frequency.exponentialRampToValueAtTime(40, t + 0.025);
-        g.gain.setValueAtTime(0.3, t);
-        g.gain.exponentialRampToValueAtTime(0.01, t + 0.025);
-        osc.connect(g);
-        g.connect(this.masterGain);
-        osc.start(t);
-        osc.stop(t + 0.025);
+      jump() {
+        this.playTone(180, 0.12, 'square', 800);
       }
 
-      // Oliver Twins 3-note chime (Item pickup / Action)
-      playChime() {
-        if (this.muted) return;
-        this.ensure();
-        if (!this.ctx) return;
-        const notes = [659.25, 830.61, 987.77]; // E5, G#5, B5
+      land() {
+        this.playTone(90, 0.03, 'square', 40);
+      }
+
+      coin() {
+        this.playTone(987, 0.08, 'square');
+        setTimeout(() => this.playTone(1318, 0.18, 'square'), 70);
+      }
+
+      trollChime() {
+        const notes = [440, 554, 659, 880];
         notes.forEach((freq, idx) => {
-          const t = this.ctx.currentTime + idx * 0.06;
-          const osc = this.ctx.createOscillator();
-          const g = this.ctx.createGain();
-          osc.type = 'square';
-          osc.frequency.setValueAtTime(freq, t);
-          g.gain.setValueAtTime(0.25, t);
-          g.gain.exponentialRampToValueAtTime(0.01, t + 0.055);
-          osc.connect(g);
-          g.connect(this.masterGain);
-          osc.start(t);
-          osc.stop(t + 0.055);
+          setTimeout(() => this.playTone(freq, 0.1, 'square'), idx * 90);
         });
       }
 
-      // Sparkling Gold Coin Ping
-      playCoin() {
-        if (this.muted) return;
-        this.ensure();
-        if (!this.ctx) return;
-        const notes = [1318.5, 2093.0]; // E6, C7
-        notes.forEach((freq, idx) => {
-          const t = this.ctx.currentTime + idx * 0.045;
-          const osc = this.ctx.createOscillator();
-          const g = this.ctx.createGain();
-          osc.type = 'square';
-          osc.frequency.setValueAtTime(freq, t);
-          g.gain.setValueAtTime(0.25, t);
-          g.gain.exponentialRampToValueAtTime(0.01, t + 0.09);
-          osc.connect(g);
-          g.connect(this.masterGain);
-          osc.start(t);
-          osc.stop(t + 0.09);
-        });
+      lever() {
+        for (let i = 0; i < 4; i++) {
+          setTimeout(() => this.playTone(160 + i * 40, 0.04, 'square'), i * 50);
+        }
       }
 
-      // Tragic falling / drowning / death descending buzz
-      playDeath() {
+      steam() {
         if (this.muted) return;
         this.ensure();
         if (!this.ctx) return;
-        const t = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const g = this.ctx.createGain();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(480, t);
-        osc.frequency.exponentialRampToValueAtTime(50, t + 0.85);
-        g.gain.setValueAtTime(0.35, t);
-        g.gain.exponentialRampToValueAtTime(0.001, t + 0.85);
-        osc.connect(g);
-        g.connect(this.masterGain);
-        osc.start(t);
-        osc.stop(t + 0.85);
-      }
-
-      // Sizzling water steam hiss
-      playHiss() {
-        if (this.muted) return;
-        this.ensure();
-        if (!this.ctx) return;
-        const bufferSize = Math.floor(this.ctx.sampleRate * 0.6);
+        const now = this.ctx.currentTime;
+        const bufferSize = Math.floor(this.ctx.sampleRate * 0.3);
         const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
         const data = buffer.getChannelData(0);
         for (let i = 0; i < bufferSize; i++) {
-          data[i] = Math.random() * 2 - 1;
+          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.4));
         }
         const noise = this.ctx.createBufferSource();
         noise.buffer = buffer;
-        const filter = this.ctx.createBiquadFilter();
-        filter.type = 'bandpass';
-        filter.frequency.setValueAtTime(1200, this.ctx.currentTime);
-        filter.frequency.exponentialRampToValueAtTime(300, this.ctx.currentTime + 0.6);
-        const g = this.ctx.createGain();
-        g.gain.setValueAtTime(0.3, this.ctx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.6);
-        noise.connect(filter);
-        filter.connect(g);
-        g.connect(this.masterGain);
-        noise.start();
-        noise.stop(this.ctx.currentTime + 0.6);
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0.15, now);
+        gain.gain.linearRampToValueAtTime(0.001, now + 0.3);
+        noise.connect(gain);
+        gain.connect(this.ctx.destination);
+        noise.start(now);
       }
 
-      // Mechanical portcullis clank / lever ratchet
-      playLever() {
-        if (this.muted) return;
-        this.ensure();
-        if (!this.ctx) return;
-        for (let i = 0; i < 4; i++) {
-          const t = this.ctx.currentTime + i * 0.05;
-          const osc = this.ctx.createOscillator();
-          const g = this.ctx.createGain();
-          osc.type = 'square';
-          osc.frequency.setValueAtTime(180 - i * 20, t);
-          g.gain.setValueAtTime(0.25, t);
-          g.gain.exponentialRampToValueAtTime(0.01, t + 0.035);
-          osc.connect(g);
-          g.connect(this.masterGain);
-          osc.start(t);
-          osc.stop(t + 0.035);
-        }
+      death() {
+        this.playTone(400, 0.4, 'sawtooth', 50);
       }
 
-      // Dialog typewriter character blip
-      playBlip() {
-        if (this.muted) return;
-        this.ensure();
-        if (!this.ctx) return;
-        const t = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const g = this.ctx.createGain();
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(950, t);
-        g.gain.setValueAtTime(0.12, t);
-        g.gain.exponentialRampToValueAtTime(0.01, t + 0.015);
-        osc.connect(g);
-        g.connect(this.masterGain);
-        osc.start(t);
-        osc.stop(t + 0.015);
+      dialogBlip() {
+        this.playTone(700 + Math.random() * 200, 0.015, 'square');
       }
 
-      // Rat squeak bite
-      playBite() {
-        if (this.muted) return;
-        this.ensure();
-        if (!this.ctx) return;
-        const t = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const g = this.ctx.createGain();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(800, t);
-        osc.frequency.linearRampToValueAtTime(1200, t + 0.04);
-        osc.frequency.exponentialRampToValueAtTime(400, t + 0.1);
-        g.gain.setValueAtTime(0.25, t);
-        g.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
-        osc.connect(g);
-        g.connect(this.masterGain);
-        osc.start(t);
-        osc.stop(t + 0.1);
-      }
-
-      // Grand Victory Fanfare
-      playVictory() {
-        if (this.muted) return;
-        this.ensure();
-        if (!this.ctx) return;
-        const melody = [
-          { f: 523.25, d: 0.12 }, // C5
-          { f: 659.25, d: 0.12 }, // E5
-          { f: 783.99, d: 0.12 }, // G5
-          { f: 1046.50, d: 0.28 }, // C6
-          { f: 783.99, d: 0.12 }, // G5
-          { f: 1046.50, d: 0.50 }  // C6
-        ];
-        let cur = this.ctx.currentTime;
-        melody.forEach(n => {
-          const osc = this.ctx.createOscillator();
-          const g = this.ctx.createGain();
-          osc.type = 'square';
-          osc.frequency.setValueAtTime(n.f, cur);
-          g.gain.setValueAtTime(0.28, cur);
-          g.gain.exponentialRampToValueAtTime(0.01, cur + n.d - 0.02);
-          osc.connect(g);
-          g.connect(this.masterGain);
-          osc.start(cur);
-          osc.stop(cur + n.d);
-          cur += n.d;
+      fanfare() {
+        const notes = [523, 659, 783, 1046, 783, 1046, 1318];
+        notes.forEach((freq, idx) => {
+          setTimeout(() => this.playTone(freq, 0.12, 'square'), idx * 110);
         });
       }
     }
 
     const sound = new BeeperAudio();
 
-    // --- 4. GAME STATE & MAP DATA ---
-    const STATE = {
-      player: {
-        x: 65,
-        y: 106,
-        vx: 0,
-        vy: 0,
-        width: 14,
-        height: 20,
-        facing: 1, // 1: right, -1: left
-        onGround: false,
-        isJumping: false,
-        isRolling: false,
-        isClimbing: false,
-        rollAngle: 0,
-        rollTimer: 0,
-        walkFrame: 0,
-        walkTicks: 0,
-        fallDistance: 0,
-        energy: 100,
-        lives: 3,
-        inventory: ["A Fresh Green Apple", null],
-        activeSlot: 0,
-        isHurt: false,
-        hurtTimer: 0,
-        isDead: false,
-        deathTimer: 0
-      },
-      currentRoom: 0, // 0: Dungeon, 1: Behind Fireplace, 2: Entrance Hall, 3: Castle Moat
-      coinsFound: 0,
-      coins: [
-        { id: 1, room: 0, x: 96, y: 56, collected: false }, // On chain above barrel
-        { id: 2, room: 1, x: 48, y: 56, collected: false }, // On high secret cavern ledge
-        { id: 3, room: 2, x: 160, y: 72, collected: false, hiddenInRailing: true }, // Behind loose railing
-        { id: 4, room: 2, x: 144, y: 32, collected: false }, // High arch crest
-        { id: 5, room: 3, x: 136, y: 84, collected: false }  // Above moat / alligator
-      ],
-      groundItems: [
-        { name: "A Jug of Cold Water", room: 0, x: 50, y: 120 },
-        { name: "A Stale Loaf of Bread", room: 0, x: 136, y: 120 },
-        { name: "A Heavy Boulder", room: 1, x: 152, y: 112 },
-        { name: "A Piece of Rope", room: 2, x: 184, y: 120 }
-      ],
-      puzzles: {
-        trollBribed: false,
-        trollX: 216,
-        trollFacing: -1,
-        trollWalkingOff: false,
-        fireLit: true,
-        ratFed: false,
-        ratX: 110,
-        ratDir: 1,
-        ratEating: false,
-        ratEatTimer: 0,
-        portcullisRaised: false,
-        portcullisY: 96,
-        wallSwitchDown: false,
-        alligatorTied: false,
-        alligatorJawOpen: false,
-        alligatorJawTimer: 0,
-        gameWon: false
-      },
-      dialog: null, // { speaker, text, progress, complete, onDone }
-      particles: [],
-      keys: {}
-    };
-
-    const ROOM_NAMES = [
-      "THE CASTLE DUNGEON",
-      "BEHIND THE FIREPLACE",
-      "THE ENTRANCE HALL",
-      "THE CASTLE MOAT"
-    ];
-
-    // --- 5. ROOM GEOMETRY & TILES (32 x 18 grid of 8x8 cells) ---
-    // Tile Legend:
-    // 0: Air
-    // 1: Stone Brick Wall (Solid)
-    // 2: Stone Floor (Solid)
-    // 3: Wood Platform (Jump-through solid top)
-    // 6: Iron Chain / Ladder (Climbable)
-    // 7: Water (Deadly)
-    // 8: Fire Hearth / Chimney base
-
-    function createRoomGrid(roomId) {
-      const grid = Array(18).fill(0).map(() => Array(32).fill(0));
-
-      // Ceiling (row 0-1) and Floor (row 16-17)
-      for (let c = 0; c < 32; c++) {
-        grid[0][c] = 1;
-        grid[1][c] = 1;
-        grid[16][c] = 2;
-        grid[17][c] = 2;
-      }
-
-      if (roomId === 0) {
-        // --- ROOM 0: THE CASTLE DUNGEON ---
-        // Left wall with fireplace opening at bottom (rows 14-15 open for fireplace crawlway)
-        for (let r = 0; r < 14; r++) { grid[r][0] = 1; grid[r][1] = 1; }
-
-        // Right wall with doorway opening at bottom (rows 12-15 open)
-        for (let r = 0; r < 12; r++) { grid[r][30] = 1; grid[r][31] = 1; }
-
-        // Fireplace structure on left (columns 2 to 5)
-        grid[12][2] = 1; grid[12][3] = 1; grid[12][4] = 1; grid[12][5] = 1;
-        grid[13][5] = 1; grid[14][5] = 1; grid[15][5] = 1;
-        grid[16][2] = 8; grid[16][3] = 8; grid[16][4] = 8;
-
-        // Hanging Chain from ceiling (column 12, rows 2 to 9)
-        for (let r = 2; r <= 9; r++) grid[r][12] = 6;
-      }
-      else if (roomId === 1) {
-        // --- ROOM 1: BEHIND THE FIREPLACE ---
-        // Left solid rock wall
-        for (let r = 0; r < 18; r++) { grid[r][0] = 1; grid[r][1] = 1; }
-        // Right wall has opening connecting to Room 0 fireplace (rows 12-15 open)
-        for (let r = 0; r < 12; r++) { grid[r][30] = 1; grid[r][31] = 1; }
-
-        // Secret high cavern ledge (columns 4 to 12, row 9)
-        for (let c = 4; c <= 12; c++) grid[9][c] = 2;
-        // Wooden ladder down from high ledge
-        for (let r = 10; r <= 15; r++) grid[r][11] = 6;
-
-        // Lower stone pedestal for heavy boulder (columns 18 to 22, row 14)
-        for (let c = 18; c <= 22; c++) {
-          grid[14][c] = 2;
-          grid[15][c] = 2;
-        }
-      }
-      else if (roomId === 2) {
-        // --- ROOM 2: THE ENTRANCE HALL & PORTCULLIS ---
-        // Left wall doorway connecting to Room 0 (rows 12-15 open)
-        for (let r = 0; r < 12; r++) { grid[r][0] = 1; grid[r][1] = 1; }
-        // Right wall opening towards moat (rows 12-15 open)
-        for (let r = 0; r < 12; r++) { grid[r][30] = 1; grid[r][31] = 1; }
-
-        // Grand stone staircase going up to balcony (columns 5 to 11)
-        grid[15][6] = 2;
-        grid[14][7] = 2; grid[15][7] = 2;
-        grid[13][8] = 2; grid[14][8] = 2; grid[15][8] = 2;
-        grid[12][9] = 2; grid[13][9] = 2; grid[14][9] = 2; grid[15][9] = 2;
-        grid[11][10] = 2; grid[12][10] = 2; grid[13][10] = 2; grid[14][10] = 2;
-
-        // Balcony walkway (columns 11 to 24, row 10)
-        for (let c = 11; c <= 24; c++) {
-          grid[10][c] = 3;
-        }
-        // Support pillars under balcony
-        for (let r = 11; r <= 15; r++) {
-          grid[r][16] = 1;
-          grid[r][23] = 1;
-        }
-
-        // High stone archway crest in center ceiling
-        grid[4][17] = 2; grid[4][18] = 2; grid[4][19] = 2;
-      }
-      else if (roomId === 3) {
-        // --- ROOM 3: THE CASTLE MOAT (SNAP HAPPY GATOR) ---
-        // Left castle wall with door opening at rows 12-15
-        for (let r = 0; r < 12; r++) { grid[r][0] = 1; grid[r][1] = 1; grid[r][2] = 1; }
-
-        // Left broken bridge section (columns 3 to 10, row 15)
-        for (let c = 3; c <= 10; c++) grid[15][c] = 3;
-        grid[15][3] = 2;
-
-        // Castle Moat Water! (columns 11 to 21, row 16-17 are deadly water)
-        for (let c = 11; c <= 21; c++) {
-          grid[16][c] = 7;
-          grid[17][c] = 7;
-        }
-
-        // Right bridge landing & grassy bank (columns 22 to 31)
-        for (let c = 22; c < 32; c++) {
-          grid[15][c] = 2;
-          grid[16][c] = 2;
-          grid[17][c] = 2;
-        }
-
-        // Right castle boundary archway
-        for (let r = 0; r < 12; r++) { grid[r][30] = 1; grid[r][31] = 1; }
-      }
-
-      return grid;
-    }
-
-    const ROOM_GRIDS = [0, 1, 2, 3].map(id => createRoomGrid(id));
-
-    // --- 6. RENDERERS & PIXEL GRAPHICS ---
+    // --- 4. GAME STATE & CONSTANTS ---
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
 
-    const offscreen = document.createElement('canvas');
-    offscreen.width = 256;
-    offscreen.height = 192;
-    const bctx = offscreen.getContext('2d');
-
-    /**
-     * Draw Dizzy Egg Sprite with iconic red boxing gloves & boots
-     */
-    function drawDizzy(ctx, p) {
-      ctx.save();
-      ctx.translate(Math.floor(p.x + p.width / 2), Math.floor(p.y + p.height / 2));
-
-      // Handle Somersault Rolling Rotation
-      if (p.isRolling || p.rollAngle !== 0) {
-        ctx.rotate((p.rollAngle * Math.PI) / 180);
+    const STATE = {
+      room: 0,
+      lives: 3,
+      coins: 0,
+      collectedCoins: [false, false, false, false, false],
+      keys: {},
+      inventory: ['apple', null],
+      activeSlot: 0,
+      dialog: null,
+      speechBubble: null,
+      speechTimer: 0,
+      victory: false,
+      flameAnim: 0,
+      fireExtinguished: false,
+      trollBribed: false,
+      ratFed: false,
+      portcullisRaised: false,
+      gatorTied: false,
+      ratX: 90,
+      ratDir: 1,
+      gatorTimer: 0,
+      player: {
+        x: 90,
+        y: 164,
+        vx: 0,
+        vy: 0,
+        facing: 1,
+        isGrounded: true,
+        isJumping: false,
+        isClimbing: false,
+        isRolling: false,
+        rollAngle: 0,
+        hurtTimer: 0,
+        walkFrame: 0,
+        walkTimer: 0
       }
+    };
 
-      const facing = p.facing;
+    const ITEM_NAMES = {
+      apple: 'A FRESH GREEN APPLE',
+      jug: 'A JUG OF COLD WATER',
+      bread: 'STALE LOAF OF BREAD',
+      rope: 'A PIECE OF STURDY ROPE',
+      boulder: 'A HEAVY BOULDER',
+      coin: 'A SOLID GOLD COIN'
+    };
 
-      // 1. Egg Body (14 wide x 18 tall)
-      // Black outline
-      ctx.fillStyle = ZX.BLACK;
-      ctx.fillRect(-6, -9, 12, 18);
-      ctx.fillRect(-7, -7, 14, 14);
-
-      // White egg shell
-      ctx.fillStyle = ZX.BRIGHT_WHITE;
-      ctx.fillRect(-5, -8, 10, 16);
-      ctx.fillRect(-6, -6, 12, 12);
-
-      // 2. Eyes & Expressions
-      if (p.isHurt) {
-        // Dizzy / Hurt "X X" eyes
-        ctx.fillStyle = ZX.BLACK;
-        ctx.fillRect(-4, -4, 3, 1);
-        ctx.fillRect(-3, -5, 1, 3);
-        ctx.fillRect(1, -4, 3, 1);
-        ctx.fillRect(2, -5, 1, 3);
-        ctx.fillRect(-1, 0, 2, 3);
-      } else {
-        const eyeOffset = facing > 0 ? 1 : -2;
-        ctx.fillStyle = ZX.BLACK;
-        ctx.fillRect(-4 + eyeOffset, -5, 3, 4);
-        ctx.fillRect(1 + eyeOffset, -5, 3, 4);
-
-        ctx.fillStyle = ZX.BRIGHT_WHITE;
-        ctx.fillRect(-3 + (facing > 0 ? eyeOffset : eyeOffset - 1), -4, 1, 2);
-        ctx.fillRect(2 + (facing > 0 ? eyeOffset : eyeOffset - 1), -4, 1, 2);
-
-        // Big cheeky smile
-        ctx.fillStyle = ZX.BLACK;
-        ctx.fillRect(-3 + eyeOffset, 1, 6, 1);
-        ctx.fillRect(-2 + eyeOffset, 2, 4, 1);
-      }
-
-      // 3. Red Boxing Gloves
-      ctx.fillStyle = ZX.BRIGHT_RED;
-      const gloveSwing = (p.walkFrame % 2 === 1) ? 2 : 0;
-      ctx.fillRect(-8, -2 + (facing > 0 ? gloveSwing : -gloveSwing), 3, 4);
-      ctx.fillRect(5, -2 + (facing > 0 ? -gloveSwing : gloveSwing), 3, 4);
-
-      // 4. Red Boxing Boots
-      ctx.fillStyle = ZX.BRIGHT_RED;
-      const bootOffset = (p.walkFrame === 1) ? 2 : (p.walkFrame === 3 ? -2 : 0);
-      ctx.fillRect(-6 + bootOffset, 7, 5, 4);
-      ctx.fillRect(1 - bootOffset, 7, 5, 4);
-
-      // Yellow bootlaces
-      ctx.fillStyle = ZX.BRIGHT_YELLOW;
-      ctx.fillRect(-5 + bootOffset, 8, 2, 1);
-      ctx.fillRect(2 - bootOffset, 8, 2, 1);
-
-      // Stars if hurt
-      if (p.isHurt) {
-        ctx.fillStyle = ZX.BRIGHT_YELLOW;
-        const tick = Date.now() * 0.01;
-        ctx.fillRect(-8 + Math.cos(tick) * 8, -14 + Math.sin(tick) * 3, 2, 2);
-        ctx.fillRect(6 + Math.cos(tick + 3) * 8, -14 + Math.sin(tick + 3) * 3, 2, 2);
-      }
-
-      ctx.restore();
-    }
-
-    /**
-     * Draw The Troll Guard (Room 0)
-     */
-    function drawTroll(ctx, x, y, facing) {
-      ctx.save();
-      ctx.translate(Math.floor(x), Math.floor(y));
-      ctx.scale(facing, 1);
-
-      // Troll Body (Green skin, red tunic, wooden club)
-      ctx.fillStyle = ZX.BRIGHT_GREEN;
-      ctx.fillRect(-6, -18, 12, 10);
-      ctx.fillStyle = ZX.BLACK;
-      ctx.fillRect(-7, -20, 14, 4);
-      ctx.fillRect(-5, -14, 10, 2);
-
-      // Angry Eyes & Tusks
-      ctx.fillStyle = ZX.BRIGHT_YELLOW;
-      ctx.fillRect(-4, -13, 2, 2);
-      ctx.fillRect(2, -13, 2, 2);
-      ctx.fillStyle = ZX.BRIGHT_WHITE;
-      ctx.fillRect(-3, -9, 2, 3);
-      ctx.fillRect(1, -9, 2, 3);
-
-      // Red Tunic
-      ctx.fillStyle = ZX.BRIGHT_RED;
-      ctx.fillRect(-8, -8, 16, 12);
-      ctx.fillStyle = ZX.YELLOW;
-      ctx.fillRect(-8, -1, 16, 2);
-
-      // Arms & Hands
-      ctx.fillStyle = ZX.BRIGHT_GREEN;
-      ctx.fillRect(-10, -6, 3, 8);
-      ctx.fillRect(7, -6, 3, 8);
-
-      // Wooden Club
-      ctx.fillStyle = ZX.YELLOW;
-      ctx.fillRect(9, -16, 4, 18);
-      ctx.fillRect(8, -20, 6, 6);
-
-      // Boots
-      ctx.fillStyle = ZX.BLACK;
-      ctx.fillRect(-6, 4, 5, 4);
-      ctx.fillRect(1, 4, 5, 4);
-
-      ctx.restore();
-    }
-
-    /**
-     * Draw The Hungry Rat (Room 0)
-     */
-    function drawRat(ctx, x, y, dir, isEating) {
-      ctx.save();
-      ctx.translate(Math.floor(x), Math.floor(y));
-      ctx.scale(dir, 1);
-
-      ctx.fillStyle = ZX.WHITE;
-      ctx.fillRect(-6, -4, 10, 5);
-      ctx.fillRect(2, -3, 4, 3);
-
-      ctx.fillStyle = ZX.BRIGHT_RED;
-      ctx.fillRect(5, -2, 1, 1);
-      ctx.fillRect(-2, -5, 2, 2);
-      ctx.fillRect(2, -3, 1, 1);
-
-      ctx.fillStyle = ZX.BRIGHT_MAGENTA;
-      ctx.fillRect(-9, -2, 4, 1);
-      ctx.fillRect(-11, -4, 3, 1);
-
-      ctx.fillStyle = ZX.BLACK;
-      const step = (Math.floor(Date.now() / 80) % 2 === 0 && !isEating) ? 1 : 0;
-      ctx.fillRect(-4 + step, 1, 2, 2);
-      ctx.fillRect(1 - step, 1, 2, 2);
-
-      ctx.restore();
-    }
-
-    /**
-     * Draw The Snap Happy Gator (Room 3)
-     */
-    function drawAlligator(ctx, x, y, isTied, jawOpen) {
-      ctx.save();
-      ctx.translate(Math.floor(x), Math.floor(y));
-
-      ctx.fillStyle = ZX.GREEN;
-      ctx.fillRect(-14, -4, 28, 6);
-
-      ctx.fillStyle = ZX.BRIGHT_GREEN;
-      for (let s = -12; s <= 6; s += 4) {
-        ctx.fillRect(s, -6, 2, 2);
-      }
-
-      ctx.fillStyle = ZX.BRIGHT_GREEN;
-      ctx.fillRect(8, -4, 12, 3);
-
-      ctx.fillStyle = ZX.BRIGHT_YELLOW;
-      ctx.fillRect(6, -7, 3, 3);
-      ctx.fillStyle = ZX.BLACK;
-      ctx.fillRect(7, -6, 1, 2);
-
-      if (isTied) {
-        // Snout wrapped in golden rope!
-        ctx.fillStyle = ZX.BRIGHT_YELLOW;
-        ctx.fillRect(11, -5, 2, 5);
-        ctx.fillRect(15, -5, 2, 5);
-        ctx.fillStyle = ZX.BLACK;
-        ctx.fillRect(6, -6, 3, 1);
-      } else {
-        ctx.fillStyle = ZX.BRIGHT_GREEN;
-        const jawY = jawOpen ? 1 : -1;
-        ctx.fillRect(8, jawY, 11, 2);
-
-        if (jawOpen) {
-          ctx.fillStyle = ZX.BRIGHT_WHITE;
-          ctx.fillRect(10, -1, 2, 1);
-          ctx.fillRect(14, -1, 2, 1);
-          ctx.fillRect(12, 0, 2, 1);
+    function getGroundY(room, x) {
+      if (room === 0) {
+        if (x >= 8 && x <= 184 && STATE.player.y <= 100) return 96;
+        if (x >= 60 && x <= 128) {
+          if (STATE.player.y <= 148) return 144;
+          if (STATE.player.y <= 172) return 168;
         }
+        if (x >= 140 && x <= 176 && STATE.player.y <= 164) return 160;
+        return 184;
       }
-
-      ctx.restore();
+      if (room === 1) {
+        if (x >= 8 && x <= 150 && STATE.player.y <= 64) return 60;
+        if (x >= 112 && x <= 136 && STATE.player.y <= 160) return 156;
+        if (x >= 100 && x < 136) return 176;
+        if (x >= 136 && x < 160) return 160;
+        if (x >= 160) return 144;
+        return 184;
+      }
+      if (room === 2) {
+        if (x >= 8 && x <= 72 && STATE.player.y <= 92) return 88;
+        if (x >= 184 && x <= 248 && STATE.player.y <= 92) return 88;
+        if (x >= 96 && x <= 160 && STATE.player.y <= 100) return 96;
+        if (x >= 88 && x <= 168 && STATE.player.y <= 108) return 104;
+        if (x >= 72 && x <= 184 && STATE.player.y <= 124) return 120;
+        if (x >= 56 && x <= 200 && STATE.player.y <= 140) return 136;
+        if (x >= 40 && x <= 216 && STATE.player.y <= 156) return 152;
+        if (x >= 24 && x <= 232 && STATE.player.y <= 172) return 168;
+        return 184;
+      }
+      if (room === 3) {
+        if (x <= 48) return 128;
+        if (x >= 172) return 144;
+        if (STATE.gatorTied && x >= 96 && x <= 128) return 136;
+        if (x >= 48 && x <= 172) return 128;
+        return 184;
+      }
+      return 184;
     }
 
-    /**
-     * Draw Authentic Wooden Dungeon Barrel (Room 0)
-     */
-    function drawBarrel(ctx, x, y) {
-      ctx.save();
-      ctx.translate(x, y);
-
-      // Wooden body
-      ctx.fillStyle = ZX.YELLOW;
-      ctx.fillRect(1, 0, 14, 16);
-      ctx.fillRect(0, 2, 16, 12);
-
-      // Iron Hoops
-      ctx.fillStyle = ZX.BLACK;
-      ctx.fillRect(0, 3, 16, 2);
-      ctx.fillRect(0, 11, 16, 2);
-
-      // Stave lines
-      ctx.fillStyle = ZX.RED;
-      ctx.fillRect(4, 0, 1, 16);
-      ctx.fillRect(8, 0, 1, 16);
-      ctx.fillRect(12, 0, 1, 16);
-
-      ctx.restore();
-    }
-
-    /**
-     * Draw Room Tiles & Background
-     */
-    function drawRoomScenery(ctx, roomId) {
-      const grid = ROOM_GRIDS[roomId];
-
-      for (let r = 0; r < 18; r++) {
-        for (let c = 0; c < 32; c++) {
-          const tile = grid[r][c];
-          const x = c * 8;
-          const y = r * 8;
-
-          if (tile === 1) {
-            // Stone Brick Wall (ZX Spectrum attribute brickwork)
-            ctx.fillStyle = ZX.BLACK;
-            ctx.fillRect(x, y, 8, 8);
-            ctx.fillStyle = (roomId === 1) ? ZX.MAGENTA : ZX.CYAN;
-            ctx.fillRect(x, y, 8, 1);
-            ctx.fillRect(x, y + 4, 8, 1);
-            const stagger = (r % 2 === 0) ? 0 : 4;
-            ctx.fillRect(x + stagger, y, 1, 4);
-            ctx.fillRect(x + ((stagger + 4) % 8), y + 4, 1, 4);
-          } else if (tile === 2) {
-            // Solid Stone Floor
-            ctx.fillStyle = (roomId === 3 && c >= 22) ? ZX.BRIGHT_GREEN : ZX.WHITE;
-            ctx.fillRect(x, y, 8, 2);
-            ctx.fillStyle = ZX.BLACK;
-            ctx.fillRect(x, y + 2, 8, 6);
-            ctx.fillStyle = ZX.BLUE;
-            ctx.fillRect(x, y + 2, 8, 1);
-          } else if (tile === 3) {
-            // Wooden Beam / Bridge / Balcony Platform
-            ctx.fillStyle = ZX.BRIGHT_YELLOW;
-            ctx.fillRect(x, y, 8, 3);
-            ctx.fillStyle = ZX.RED;
-            ctx.fillRect(x, y + 3, 8, 2);
-          } else if (tile === 6) {
-            // Hanging Chain or Wooden Ladder
-            ctx.fillStyle = ZX.BRIGHT_WHITE;
-            ctx.fillRect(x + 3, y, 2, 8);
-            ctx.fillStyle = ZX.CYAN;
-            ctx.fillRect(x + 2, y + 2, 4, 1);
-            ctx.fillRect(x + 2, y + 6, 4, 1);
-          } else if (tile === 7) {
-            // Castle Moat Water!
-            ctx.fillStyle = ZX.BRIGHT_BLUE;
-            ctx.fillRect(x, y, 8, 8);
-            ctx.fillStyle = ZX.BRIGHT_CYAN;
-            const wave = Math.floor((Date.now() / 150 + c) % 4);
-            ctx.fillRect(x, y + wave, 8, 1);
-          } else if (tile === 8) {
-            // Fireplace stone base
-            ctx.fillStyle = ZX.WHITE;
-            ctx.fillRect(x, y, 8, 8);
-            ctx.fillStyle = ZX.RED;
-            ctx.fillRect(x + 1, y + 1, 6, 6);
-          }
-        }
+    function isClimbable(room, x, y) {
+      if (room === 0) {
+        return (x >= 18 && x <= 34 && y >= 96 && y <= 168);
       }
-
-      // Room-specific unique scenery
-      if (roomId === 0) {
-        // Fireplace Arch & Fire (Room 0)
-        ctx.fillStyle = ZX.WHITE;
-        ctx.fillRect(16, 96, 24, 6);
-        ctx.fillRect(16, 96, 6, 32);
-        ctx.fillRect(34, 96, 6, 32);
-
-        // Animated Fire or Extinguished Embers
-        if (STATE.puzzles.fireLit) {
-          const fFrame = Math.floor(Date.now() / 120) % 3;
-          ctx.fillStyle = (fFrame === 0) ? ZX.BRIGHT_RED : (fFrame === 1 ? ZX.BRIGHT_YELLOW : ZX.RED);
-          ctx.fillRect(22, 114, 12, 14);
-          ctx.fillStyle = ZX.BRIGHT_WHITE;
-          ctx.fillRect(25, 118, 6, 8);
-          // Sparks
-          if (Math.random() < 0.3) {
-            STATE.particles.push({
-              x: 24 + Math.random() * 8, y: 110,
-              vx: (Math.random() - 0.5) * 0.4, vy: -0.6,
-              color: ZX.BRIGHT_YELLOW, life: 25
-            });
-          }
-        } else {
-          // Extinguished cool black/grey embers
-          ctx.fillStyle = ZX.BLACK;
-          ctx.fillRect(22, 122, 12, 6);
-          ctx.fillStyle = ZX.WHITE;
-          ctx.fillRect(24, 123, 8, 2);
-          // Gentle steam puff
-          if (Math.random() < 0.08) {
-            STATE.particles.push({
-              x: 26 + Math.random() * 4, y: 120,
-              vx: (Math.random() - 0.5) * 0.2, vy: -0.4,
-              color: ZX.CYAN, life: 30
-            });
-          }
-        }
-
-        // Authentic Wooden Dungeon Barrel at column 11-12
-        drawBarrel(ctx, 88, 112);
-
-        // Dungeon window with blue moonlight bars
-        ctx.fillStyle = ZX.BLUE;
-        ctx.fillRect(140, 24, 20, 24);
-        ctx.fillStyle = ZX.BLACK;
-        ctx.fillRect(146, 24, 2, 24);
-        ctx.fillRect(154, 24, 2, 24);
-        ctx.fillRect(140, 36, 20, 2);
-      }
-      else if (roomId === 1) {
-        // Behind the fireplace: Dripping stalactites
-        ctx.fillStyle = ZX.MAGENTA;
-        ctx.fillRect(50, 16, 6, 12);
-        ctx.fillRect(52, 28, 2, 6);
-        ctx.fillRect(180, 16, 8, 14);
-        ctx.fillRect(183, 30, 2, 8);
-
-        // Water drip particle
-        if (Math.random() < 0.05) {
-          STATE.particles.push({
-            x: 184, y: 38, vx: 0, vy: 1.2, color: ZX.BRIGHT_CYAN, life: 60
-          });
-        }
-      }
-      else if (roomId === 2) {
-        // Balustrade / Railing along the high balcony
-        ctx.fillStyle = ZX.BRIGHT_CYAN;
-        ctx.fillRect(88, 70, 104, 2);
-        for (let bx = 88; bx <= 192; bx += 8) {
-          ctx.fillRect(bx, 72, 2, 8);
-        }
-
-        // Wall Switch (Lever) on high balcony at x = 112, y = 58
-        ctx.fillStyle = ZX.WHITE;
-        ctx.fillRect(112, 60, 6, 10);
-        ctx.fillStyle = ZX.BRIGHT_YELLOW;
-        if (STATE.puzzles.wallSwitchDown) {
-          ctx.fillRect(114, 65, 5, 2);
-          ctx.fillRect(118, 67, 3, 3);
-        } else {
-          ctx.fillRect(114, 61, 5, 2);
-          ctx.fillRect(118, 58, 3, 3);
-        }
-
-        // The Heavy Portcullis Gate at x = 232
-        const py = STATE.puzzles.portcullisRaised ? 64 : 96;
-        ctx.fillStyle = ZX.BRIGHT_WHITE;
-        for (let px = 232; px <= 248; px += 4) {
-          ctx.fillRect(px, py, 2, 32);
-          ctx.fillRect(px - 1, py + 30, 4, 3);
-        }
-        ctx.fillRect(230, py + 8, 22, 2);
-        ctx.fillRect(230, py + 20, 22, 2);
-      }
-      else if (roomId === 3) {
-        // Sun / Moon in sky
-        ctx.fillStyle = ZX.BRIGHT_YELLOW;
-        ctx.beginPath();
-        ctx.arc(200, 30, 8, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Castle Outer Archway on far right
-        ctx.fillStyle = ZX.BRIGHT_GREEN;
-        ctx.fillRect(240, 96, 16, 24);
-        ctx.fillStyle = ZX.BLACK;
-        ctx.fillRect(244, 102, 10, 18);
-      }
-    }
-
-    /**
-     * Draw Collectible Items and Coins
-     */
-    function drawItem(ctx, name, x, y) {
-      ctx.save();
-      ctx.translate(Math.floor(x), Math.floor(y));
-
-      if (name === "A Fresh Green Apple") {
-        ctx.fillStyle = ZX.BRIGHT_GREEN;
-        ctx.fillRect(2, 3, 8, 8);
-        ctx.fillRect(3, 2, 6, 10);
-        ctx.fillStyle = ZX.YELLOW;
-        ctx.fillRect(5, 0, 2, 3);
-        ctx.fillStyle = ZX.BRIGHT_WHITE;
-        ctx.fillRect(4, 4, 2, 2);
-      }
-      else if (name === "A Jug of Cold Water") {
-        ctx.fillStyle = ZX.BRIGHT_CYAN;
-        ctx.fillRect(2, 3, 8, 9);
-        ctx.fillRect(3, 1, 6, 2);
-        ctx.fillStyle = ZX.CYAN;
-        ctx.fillRect(0, 4, 2, 6);
-        ctx.fillStyle = ZX.BRIGHT_WHITE;
-        ctx.fillRect(4, 5, 2, 4);
-      }
-      else if (name === "A Stale Loaf of Bread") {
-        ctx.fillStyle = ZX.YELLOW;
-        ctx.fillRect(1, 4, 12, 6);
-        ctx.fillStyle = ZX.BRIGHT_WHITE;
-        ctx.fillRect(4, 5, 2, 4);
-        ctx.fillRect(8, 5, 2, 4);
-      }
-      else if (name === "A Heavy Boulder") {
-        ctx.fillStyle = ZX.WHITE;
-        ctx.fillRect(2, 2, 12, 12);
-        ctx.fillRect(4, 0, 8, 16);
-        ctx.fillStyle = ZX.BLACK;
-        ctx.fillRect(5, 5, 3, 3);
-        ctx.fillRect(9, 8, 2, 2);
-      }
-      else if (name === "A Piece of Rope") {
-        ctx.fillStyle = ZX.BRIGHT_YELLOW;
-        ctx.fillRect(2, 3, 8, 7);
-        ctx.fillStyle = ZX.BLACK;
-        ctx.fillRect(4, 5, 4, 3);
-        ctx.fillStyle = ZX.BRIGHT_WHITE;
-        ctx.fillRect(3, 4, 2, 2);
-      }
-
-      ctx.restore();
-    }
-
-    function drawCoin(ctx, x, y) {
-      ctx.save();
-      ctx.translate(Math.floor(x), Math.floor(y));
-
-      ctx.fillStyle = ZX.BRIGHT_YELLOW;
-      ctx.fillRect(2, 1, 4, 6);
-      ctx.fillRect(1, 2, 6, 4);
-      ctx.fillStyle = ZX.YELLOW;
-      ctx.fillRect(3, 3, 2, 2);
-
-      if (Math.floor(Date.now() / 200) % 2 === 0) {
-        ctx.fillStyle = ZX.BRIGHT_WHITE;
-        ctx.fillRect(2, 2, 2, 2);
-      }
-
-      ctx.restore();
-    }
-
-    /**
-     * Draw ZX Spectrum HUD (Bottom 48 Scanlines: y = 144 to 191)
-     */
-    function drawHUD(ctx) {
-      ctx.fillStyle = ZX.BLACK;
-      ctx.fillRect(0, 144, 256, 48);
-
-      ctx.fillStyle = ZX.BRIGHT_WHITE;
-      ctx.fillRect(0, 144, 256, 1);
-      ctx.fillStyle = ZX.CYAN;
-      ctx.fillRect(0, 145, 256, 1);
-
-      // Line 1: Energy & Lives
-      drawText(ctx, "ENERGY", 8, 148, ZX.CYAN);
-
-      const energyWidth = Math.max(0, Math.floor((STATE.player.energy / 100) * 54));
-      ctx.fillStyle = ZX.RED;
-      ctx.fillRect(60, 148, 54, 7);
-      ctx.fillStyle = (STATE.player.energy > 40) ? ZX.BRIGHT_GREEN : ZX.BRIGHT_YELLOW;
-      ctx.fillRect(60, 148, energyWidth, 7);
-
-      drawText(ctx, "LIVES:", 128, 148, ZX.CYAN);
-      for (let l = 0; l < STATE.player.lives; l++) {
-        ctx.fillStyle = ZX.BRIGHT_WHITE;
-        ctx.fillRect(180 + l * 12, 147, 6, 8);
-        ctx.fillRect(181 + l * 12, 146, 4, 10);
-      }
-
-      // Line 2: Coins Tally
-      drawText(ctx, `COINS FOUND: ${STATE.coinsFound} / 5`, 8, 159, ZX.BRIGHT_YELLOW);
-      drawCoin(ctx, 160, 158);
-
-      // Line 3 & 4: Inventory
-      ctx.fillStyle = ZX.BLUE;
-      ctx.fillRect(0, 168, 256, 1);
-
-      const inv = STATE.player.inventory;
-      const slot1Name = inv[0] || "(EMPTY)";
-      const slot2Name = inv[1] || "(EMPTY)";
-
-      const arrow1 = (STATE.player.activeSlot === 0) ? ">" : " ";
-      const arrow2 = (STATE.player.activeSlot === 1) ? ">" : " ";
-
-      drawText(ctx, `${arrow1}[1] ${slot1Name}`, 8, 172, (STATE.player.activeSlot === 0) ? ZX.BRIGHT_WHITE : ZX.WHITE);
-      drawText(ctx, `${arrow2}[2] ${slot2Name}`, 8, 181, (STATE.player.activeSlot === 1) ? ZX.BRIGHT_WHITE : ZX.WHITE);
-
-      const nearbyItem = getNearbyGroundItem();
-      if (nearbyItem) {
-        drawText(ctx, "[P] PICK UP", 168, 172, ZX.BRIGHT_YELLOW);
-      } else if (isNearbyAction()) {
-        drawText(ctx, "[U] ACTION", 168, 172, ZX.BRIGHT_GREEN);
-      }
-    }
-
-    /**
-     * Draw Dialog Overlay Box (Authentic Spectrum Popup)
-     */
-    function drawDialogBox(ctx) {
-      if (!STATE.dialog) return;
-
-      const d = STATE.dialog;
-      const boxX = 16;
-      const boxY = 24;
-      const boxW = 224;
-      const boxH = 96;
-
-      ctx.fillStyle = ZX.BLACK;
-      ctx.fillRect(boxX, boxY, boxW, boxH);
-      ctx.fillStyle = ZX.BRIGHT_CYAN;
-      ctx.strokeRect(boxX + 0.5, boxY + 0.5, boxW - 1, boxH - 1);
-      ctx.strokeRect(boxX + 2.5, boxY + 2.5, boxW - 5, boxH - 5);
-
-      drawText(ctx, `* ${d.speaker} *`, boxX + 12, boxY + 8, ZX.BRIGHT_YELLOW);
-
-      const textToDisplay = d.text.substr(0, d.progress);
-      const lines = wrapText(textToDisplay, 25);
-      for (let i = 0; i < lines.length; i++) {
-        drawText(ctx, lines[i], boxX + 12, boxY + 24 + i * 11, ZX.BRIGHT_WHITE);
-      }
-
-      if (d.progress >= d.text.length) {
-        if (Math.floor(Date.now() / 300) % 2 === 0) {
-          drawText(ctx, "[ENTER / U] CONTINUE", boxX + 24, boxY + boxH - 14, ZX.BRIGHT_CYAN);
-        }
-      }
-    }
-
-    function wrapText(text, maxChars) {
-      const words = text.split(" ");
-      const lines = [];
-      let current = "";
-      for (let w of words) {
-        if ((current + (current ? " " : "") + w).length <= maxChars) {
-          current += (current ? " " : "") + w;
-        } else {
-          lines.push(current);
-          current = w;
-        }
-      }
-      if (current) lines.push(current);
-      return lines;
-    }
-
-    // --- 7. COLLISION & PHYSICS ENGINE ---
-    function isSolid(tile) {
-      return tile === 1 || tile === 2 || tile === 8;
-    }
-
-    function isLadderOrChain(roomId, x, y) {
-      const grid = ROOM_GRIDS[roomId];
-      const c = Math.floor(x / 8);
-      const r = Math.floor(y / 8);
-      if (r >= 0 && r < 18 && c >= 0 && c < 32) {
-        return grid[r][c] === 6;
+      if (room === 1) {
+        return (x >= 140 && x <= 154 && y >= 60 && y <= 144);
       }
       return false;
     }
 
-    function checkCollision(x, y, w, h, roomId) {
-      const grid = ROOM_GRIDS[roomId];
-      const startC = Math.max(0, Math.floor(x / 8));
-      const endC = Math.min(31, Math.floor((x + w - 1) / 8));
-      const startR = Math.max(0, Math.floor(y / 8));
-      const endR = Math.min(17, Math.floor((y + h - 1) / 8));
+    // --- 5. INVENTORY & HUD MANAGEMENT ---
+    function updateHud() {
+      const slot0El = document.getElementById('slot0');
+      const slot1El = document.getElementById('slot1');
+      const hintEl = document.getElementById('actionHint');
 
-      // Check Barrel in Room 0 (x: 88 to 104, y: 112 to 128)
-      if (roomId === 0) {
-        if (x + w > 88 && x < 104 && y + h > 112 && y < 128) {
-          return { solid: true, type: 'barrel' };
-        }
-      }
+      const name0 = STATE.inventory[0] ? ITEM_NAMES[STATE.inventory[0]] : '(EMPTY)';
+      const name1 = STATE.inventory[1] ? ITEM_NAMES[STATE.inventory[1]] : '(EMPTY)';
 
-      // Check portcullis in Room 2
-      if (roomId === 2 && !STATE.puzzles.portcullisRaised) {
-        if (x + w > 230 && x < 252 && y + h > 88) {
-          return { solid: true, type: 'portcullis' };
-        }
-      }
+      slot0El.textContent = 'SLOT 1: ' + name0;
+      slot1El.textContent = 'SLOT 2: ' + name1;
 
-      // Check Troll guard in Room 0
-      if (roomId === 0 && !STATE.puzzles.trollBribed) {
-        if (x + w > STATE.puzzles.trollX - 8 && x < STATE.puzzles.trollX + 12 && y + h > 96) {
-          return { solid: true, type: 'troll' };
-        }
-      }
+      slot0El.classList.toggle('active', STATE.activeSlot === 0);
+      slot1El.classList.toggle('active', STATE.activeSlot === 1);
 
-      for (let r = startR; r <= endR; r++) {
-        for (let c = startC; c <= endC; c++) {
-          const t = grid[r][c];
-          if (isSolid(t)) return { solid: true, type: t };
-          if (t === 7) return { water: true };
-          if (t === 3 && y + h <= r * 8 + 4) return { platform: true, topY: r * 8 };
-        }
+      const activeItem = STATE.inventory[STATE.activeSlot];
+      if (activeItem) {
+        hintEl.textContent = '[SPACE] USE ' + ITEM_NAMES[activeItem] + '  |  [E] DROP  |  [TAB] SWITCH';
+      } else {
+        hintEl.textContent = '[SPACE] EXAMINE  |  [E] PICK UP  |  [TAB] SWITCH SLOT';
       }
-      return { solid: false };
     }
 
-    /**
-     * Check if Dizzy can stand on an alligator in Room 3
-     */
-    function checkAlligatorPlatform(p) {
-      if (STATE.currentRoom !== 3 || !STATE.puzzles.alligatorTied) return false;
-      const gatorX = 118;
-      const gatorY = 122;
-      if (p.x + p.width > gatorX && p.x < gatorX + 36) {
-        if (p.y + p.height >= gatorY - 3 && p.y + p.height <= gatorY + 6 && p.vy >= 0) {
-          return gatorY;
-        }
-      }
-      return false;
-    }
-
-    // --- 8. DIALOG & PUZZLE INTERACTIONS ---
-    function triggerDialog(speaker, text, onDone = null) {
+    function showDialog(text, onDismiss = null) {
       STATE.dialog = {
-        speaker,
-        text,
-        progress: 0,
-        complete: false,
-        onDone
+        fullText: text,
+        currentText: '',
+        charIdx: 0,
+        onDismiss: onDismiss
       };
-      sound.playChime();
     }
 
     function advanceDialog() {
       if (!STATE.dialog) return;
-      if (STATE.dialog.progress < STATE.dialog.text.length) {
-        STATE.dialog.progress = STATE.dialog.text.length;
+      if (STATE.dialog.charIdx < STATE.dialog.fullText.length) {
+        STATE.dialog.charIdx = STATE.dialog.fullText.length;
+        STATE.dialog.currentText = STATE.dialog.fullText;
       } else {
-        const cb = STATE.dialog.onDone;
+        const cb = STATE.dialog.onDismiss;
         STATE.dialog = null;
         if (cb) cb();
       }
     }
 
-    function getNearbyGroundItem() {
-      const p = STATE.player;
-      return STATE.groundItems.find(it => 
-        it.room === STATE.currentRoom &&
-        Math.abs((it.x + 4) - (p.x + p.width / 2)) < 14 &&
-        Math.abs((it.y + 4) - (p.y + p.height / 2)) < 16
-      );
+    function showSpeech(text, duration = 180) {
+      STATE.speechBubble = text;
+      STATE.speechTimer = duration;
     }
 
-    function isNearbyAction() {
-      const p = STATE.player;
-      const r = STATE.currentRoom;
+    function hasItem(item) {
+      return STATE.inventory[0] === item || STATE.inventory[1] === item;
+    }
 
-      if (r === 0 && !STATE.puzzles.trollBribed && p.x > 185) return true;
-      if (r === 0 && p.x < 42 && STATE.puzzles.fireLit) return true;
-      if (r === 0 && !STATE.puzzles.ratFed && Math.abs(p.x - STATE.puzzles.ratX) < 30) return true;
-      if (r === 2 && Math.abs(p.x - 114) < 18 && p.y < 80) return true;
-      if (r === 2 && Math.abs(p.x - 160) < 18 && p.y < 80) return true;
-      if (r === 3 && p.x > 80 && p.x < 125) return true;
-
+    function hasItemOrUsed(item) {
+      if (hasItem(item)) return true;
+      if (item === 'jug' && STATE.fireExtinguished) return true;
+      if (item === 'apple' && STATE.trollBribed) return true;
+      if (item === 'bread' && STATE.ratFed) return true;
+      if (item === 'rope' && STATE.gatorTied) return true;
       return false;
     }
 
-    /**
-     * Use / Action Handler
-     */
-    function performAction() {
-      sound.ensure();
+    // --- 6. ACTIONS & PUZZLE INTERACTIONS ---
+    function pickUpOrDrop() {
       const p = STATE.player;
-      const r = STATE.currentRoom;
-      const inv = p.inventory;
-      const activeItem = inv[p.activeSlot];
+      const room = STATE.room;
 
-      // 1. TROLL GUARD (Room 0)
-      if (r === 0 && !STATE.puzzles.trollBribed && p.x > 180) {
-        const hasApple = inv.includes("A Fresh Green Apple");
-        if (hasApple) {
-          const idx = inv.indexOf("A Fresh Green Apple");
-          inv[idx] = null;
-
-          triggerDialog("TROLL GUARD", "Mmm! A fresh green apple! That'll fill my belly! You could escape through the fire using water!", () => {
-            STATE.puzzles.trollBribed = true;
-            STATE.puzzles.trollWalkingOff = true;
-            sound.playChime();
-          });
-        } else {
-          triggerDialog("TROLL GUARD", "Grrr! None shall pass! I am starving! Bring me something tasty to eat!");
+      if (room === 0) {
+        if (!hasItemOrUsed('jug') && Math.abs(p.x - 146) < 18 && Math.abs(p.y - 160) < 18) {
+          tryPickup('jug');
+          return;
         }
-        return;
-      }
-
-      // 2. FIREPLACE (Room 0)
-      if (r === 0 && p.x < 45 && STATE.puzzles.fireLit) {
-        const hasWater = inv.includes("A Jug of Cold Water");
-        if (hasWater) {
-          const idx = inv.indexOf("A Jug of Cold Water");
-          inv[idx] = null;
-          STATE.puzzles.fireLit = false;
-          sound.playHiss();
-
-          triggerDialog("DIZZY", "You splash the cold water onto the roaring fire! *HISSSSS* The fire is extinguished! Safe to pass left!", () => {
-            for (let i = 0; i < 30; i++) {
-              STATE.particles.push({
-                x: 24 + Math.random() * 12, y: 116,
-                vx: (Math.random() - 0.5) * 0.8, vy: -0.8 - Math.random() * 0.8,
-                color: ZX.BRIGHT_WHITE, life: 40
-              });
-            }
-          });
-        } else {
-          triggerDialog("DIZZY", "The fire is blazing fiercely! I'll be roasted alive if I try to crawl through!");
-        }
-        return;
-      }
-
-      // 3. HUNGRY RAT (Room 0)
-      if (r === 0 && !STATE.puzzles.ratFed && Math.abs(p.x - STATE.puzzles.ratX) < 36) {
-        const hasBread = inv.includes("A Stale Loaf of Bread");
-        if (hasBread) {
-          const idx = inv.indexOf("A Stale Loaf of Bread");
-          inv[idx] = null;
-          STATE.puzzles.ratEating = true;
-          STATE.puzzles.ratEatTimer = 60;
-          sound.playChime();
-
-          triggerDialog("DIZZY", "You give the stale bread to the hungry rat. Squeak! It munches happily and scurries into the wall!", () => {
-            STATE.puzzles.ratFed = true;
-          });
-        } else {
-          triggerDialog("DIZZY", "A vicious castle rat! It looks hungry and ready to bite!");
-        }
-        return;
-      }
-
-      // 4. WALL SWITCH / PORTCULLIS (Room 2)
-      if (r === 2 && Math.abs(p.x - 114) < 18 && p.y < 80) {
-        STATE.puzzles.wallSwitchDown = !STATE.puzzles.wallSwitchDown;
-        STATE.puzzles.portcullisRaised = STATE.puzzles.wallSwitchDown;
-        sound.playLever();
-
-        const msg = STATE.puzzles.portcullisRaised 
-          ? "*CLANK-CLANK!* You pull the lever down! The heavy portcullis gate raises open!"
-          : "*CLANK!* You push the lever up. The portcullis lowers shut.";
-        triggerDialog("WALL LEVER", msg);
-        return;
-      }
-
-      // 5. HIDDEN COIN IN BALUSTRADE / RAILING (Room 2)
-      if (r === 2 && Math.abs(p.x - 160) < 18 && p.y < 80) {
-        const c3 = STATE.coins.find(c => c.id === 3);
-        if (c3 && c3.hiddenInRailing) {
-          c3.hiddenInRailing = false;
-          sound.playCoin();
-          triggerDialog("SECRET RAILING", "You inspect the loose stone railing... A golden coin falls out into view!");
+        if (!hasItemOrUsed('bread') && Math.abs(p.x - 164) < 18 && Math.abs(p.y - 160) < 18) {
+          tryPickup('bread');
           return;
         }
       }
 
-      // 6. SNAP HAPPY GATOR (Room 3)
-      if (r === 3 && p.x > 80 && p.x < 130) {
-        const hasRope = inv.includes("A Piece of Rope");
-        if (hasRope) {
-          const idx = inv.indexOf("A Piece of Rope");
-          inv[idx] = null;
-          STATE.puzzles.alligatorTied = true;
-          sound.playChime();
-
-          triggerDialog("DIZZY", "You lasso the rope around the alligator's snout and tie it shut! It is now a safe stepping stone!", () => {
-            sound.playCoin();
-          });
-        } else {
-          triggerDialog("DIZZY", "Snap Happy Gator is snapping its jaws! Falling in will be instant doom! I need something to tie its snout!");
+      if (room === 2) {
+        if (!hasItemOrUsed('rope') && Math.abs(p.x - 128) < 22 && Math.abs(p.y - 88) < 22) {
+          tryPickup('rope');
+          return;
         }
-        return;
       }
 
-      if (activeItem) {
-        triggerDialog("INVENTORY", `You are carrying ${activeItem}. Nothing here to use it on.`);
+      // Drop active item
+      const item = STATE.inventory[STATE.activeSlot];
+      if (item) {
+        STATE.inventory[STATE.activeSlot] = null;
+        updateHud();
+        showSpeech('DROPPED ' + ITEM_NAMES[item]);
+      }
+    }
+
+    function tryPickup(item) {
+      const freeSlot = STATE.inventory[0] === null ? 0 : (STATE.inventory[1] === null ? 1 : -1);
+      if (freeSlot !== -1) {
+        STATE.inventory[freeSlot] = item;
+        STATE.activeSlot = freeSlot;
+        updateHud();
+        sound.coin();
+        showSpeech('PICKED UP ' + ITEM_NAMES[item]);
       } else {
-        triggerDialog("DIZZY", "Nothing here to operate. Keep searching!");
+        showSpeech('POCKETS FULL! DROP SOMETHING FIRST.');
       }
     }
 
-    /**
-     * Pick Up / Drop Items
-     */
-    function pickUpOrDrop() {
-      sound.ensure();
+    function performAction() {
       const p = STATE.player;
-      const groundItem = getNearbyGroundItem();
+      const room = STATE.room;
+      const curItem = STATE.inventory[STATE.activeSlot];
 
-      if (groundItem) {
-        if (p.inventory[0] === null) {
-          p.inventory[0] = groundItem.name;
-          removeItemFromGround(groundItem);
-          sound.playChime();
-        } else if (p.inventory[1] === null) {
-          p.inventory[1] = groundItem.name;
-          p.activeSlot = 1;
-          removeItemFromGround(groundItem);
-          sound.playChime();
-        } else {
-          // Inventory full (2 items): Swap active slot with ground item!
-          const swapped = p.inventory[p.activeSlot];
-          p.inventory[p.activeSlot] = groundItem.name;
-          groundItem.name = swapped;
-          sound.playChime();
+      // ROOM 0 (Dungeon)
+      if (room === 0) {
+        if (!STATE.fireExtinguished && p.x < 56 && p.y > 140) {
+          if (curItem === 'jug') {
+            STATE.fireExtinguished = true;
+            STATE.inventory[STATE.activeSlot] = null;
+            updateHud();
+            sound.steam();
+            showDialog("YOU SPLASHED COLD WATER ONTO THE ROARING FIRE!\n\nTHE FIRE COOLS TO ASHES!\nTHE PASSAGE BEHIND THE FIREPLACE IS NOW OPEN!");
+            return;
+          } else {
+            showDialog("A SCORCHING FIRE BURNS IN THE HEARTH!\nIT'S TOO HOT TO PASS THROUGH.");
+            return;
+          }
         }
-      } else {
-        // Drop active item onto ground
-        if (p.inventory[p.activeSlot] !== null) {
-          const droppedName = p.inventory[p.activeSlot];
-          p.inventory[p.activeSlot] = null;
-          STATE.groundItems.push({
-            name: droppedName,
-            room: STATE.currentRoom,
-            x: Math.round(p.x),
-            y: Math.round(p.y + p.height - 8)
-          });
-          sound.playLand();
+
+        if (!STATE.trollBribed && p.x > 165 && p.y > 130) {
+          if (curItem === 'apple') {
+            STATE.trollBribed = true;
+            STATE.inventory[STATE.activeSlot] = null;
+            updateHud();
+            sound.trollChime();
+            showDialog("THE TROLL HAPPILY ACCEPTS THE JUICY GREEN APPLE!\n\n'YUMMY! YOU MAY PASS, LITTLE EGG!'\nTHE WAY TO THE ENTRANCE HALL IS CLEAR!");
+            return;
+          } else {
+            showDialog("THE BURTON TROLL STANDS GUARD!\n\n'NONE SHALL PASS WITHOUT DELICIOUS TASTY FOOD!'");
+            return;
+          }
         }
-      }
-    }
 
-    function removeItemFromGround(item) {
-      const idx = STATE.groundItems.indexOf(item);
-      if (idx !== -1) STATE.groundItems.splice(idx, 1);
-    }
-
-    // --- 9. PLAYER UPDATE & FLIP-SCREEN MECHANICS ---
-    function updatePlayer() {
-      const p = STATE.player;
-
-      if (p.isHurt) {
-        p.hurtTimer--;
-        if (p.hurtTimer <= 0) p.isHurt = false;
-      }
-
-      if (p.isDead) {
-        p.deathTimer--;
-        p.y -= 0.6; // Angel float up
-        if (p.deathTimer <= 0) {
-          respawnPlayer();
-        }
-        return;
-      }
-
-      // Check ladder / chain climbing
-      const onLadder = isLadderOrChain(STATE.currentRoom, p.x + p.width / 2, p.y + p.height / 2) ||
-                       isLadderOrChain(STATE.currentRoom, p.x + p.width / 2, p.y + p.height - 2);
-
-      const upPressed = STATE.keys['ArrowUp'] || STATE.keys['KeyW'] || STATE.keys['btnJump'];
-      const downPressed = STATE.keys['ArrowDown'] || STATE.keys['KeyS'] || STATE.keys['btnDown'];
-
-      if (onLadder && (upPressed || downPressed) && !p.isRolling) {
-        p.isClimbing = true;
-        p.isJumping = false;
-      }
-
-      if (p.isClimbing) {
-        if (!onLadder) {
-          p.isClimbing = false;
-        } else {
-          p.vy = 0;
-          if (upPressed) p.vy = -1.2;
-          if (downPressed) p.vy = 1.2;
-          p.onGround = true;
-
-          // Jump off ladder
-          if (STATE.keys['Space']) {
-            p.isClimbing = false;
-            p.vy = -3.75;
-            sound.playJump();
+        if (!STATE.ratFed && Math.abs(p.x - STATE.ratX) < 30 && p.y <= 104) {
+          if (curItem === 'bread') {
+            STATE.ratFed = true;
+            STATE.inventory[STATE.activeSlot] = null;
+            updateHud();
+            sound.coin();
+            showDialog("THE RAVENOUS RAT SCAMPERS OVER,\nDEVOURS THE STALE BREAD,\nAND SCURRIES AWAY PEACEFULLY!");
+            return;
+          } else {
+            showDialog("A VICIOUS RAT PROWLS THE STONE LEDGE!\nIT LOOKS VERY HUNGRY.");
+            return;
           }
         }
       }
 
-      // Horizontal Walking Input
-      let moveDir = 0;
-      if (STATE.keys['ArrowLeft'] || STATE.keys['KeyA'] || STATE.keys['btnLeft']) moveDir -= 1;
-      if (STATE.keys['ArrowRight'] || STATE.keys['KeyD'] || STATE.keys['btnRight']) moveDir += 1;
-
-      if (moveDir !== 0 && !p.isRolling) {
-        p.facing = moveDir;
-        p.vx = moveDir * 1.25;
-        p.walkTicks++;
-        if (p.walkTicks % 6 === 0) {
-          p.walkFrame = (p.walkFrame + 1) % 4;
+      // ROOM 1 (Behind Fireplace)
+      if (room === 1) {
+        if (Math.abs(p.x - 110) < 24 && p.y > 140) {
+          showDialog("A DAMP CAVERN BEHIND THE FIREPLACE.\nTHE SUBTERRANEAN WATER IS TREACHEROUSLY DEEP!");
+          return;
         }
-      } else if (!p.isRolling) {
+      }
+
+      // ROOM 2 (Entrance Hall)
+      if (room === 2) {
+        if (Math.abs(p.x - 34) < 20 && Math.abs(p.y - 88) < 20) {
+          STATE.portcullisRaised = !STATE.portcullisRaised;
+          sound.lever();
+          if (STATE.portcullisRaised) {
+            showDialog("CLANK! YOU PULL THE WALL LEVER DOWN!\n\nTHE HEAVY PORTCULLIS AT THE MOAT RISES!");
+          } else {
+            showDialog("CLANK! YOU PULL THE WALL LEVER UP!\n\nTHE HEAVY PORTCULLIS DROPS SHUT!");
+          }
+          return;
+        }
+      }
+
+      // ROOM 3 (Moat & Portcullis)
+      if (room === 3) {
+        if (!STATE.gatorTied && p.x >= 70 && p.x <= 130 && p.y <= 136) {
+          if (curItem === 'rope') {
+            STATE.gatorTied = true;
+            STATE.inventory[STATE.activeSlot] = null;
+            updateHud();
+            sound.coin();
+            showDialog("YOU NIMBLY TIE THE STURDY ROPE AROUND THE ALLIGATOR'S SNOUT!\n\nIT CAN NO LONGER BITE!\nYOU CAN SAFELY USE IT AS A STEPPING STONE!");
+            return;
+          } else {
+            showDialog("A VICIOUS SNAP-HAPPY ALLIGATOR GUARDS THE MOAT!\nYOU NEED A WAY TO TIE ITS JAWS!");
+            return;
+          }
+        }
+
+        if (!STATE.portcullisRaised && p.x > 160) {
+          showDialog("THE MASSIVE IRON PORTCULLIS BARS THE EXIT!\nFIND A LEVER INSIDE THE CASTLE TO RAISE IT!");
+          return;
+        }
+      }
+
+      // Default examine
+      if (curItem) {
+        showSpeech('HOLDING ' + ITEM_NAMES[curItem]);
+      } else {
+        showSpeech('NOTHING TO USE HERE.');
+      }
+    }
+
+    function checkCoinPickup() {
+      const p = STATE.player;
+      const r = STATE.room;
+
+      // Coin 0: Room 0 (Dungeon) x=190, y=152
+      if (r === 0 && !STATE.collectedCoins[0] && Math.abs(p.x - 190) < 18 && Math.abs(p.y - 156) < 20) {
+        collectCoin(0);
+      }
+      // Coin 1: Room 1 (Fireplace) x=24, y=46
+      if (r === 1 && !STATE.collectedCoins[1] && Math.abs(p.x - 24) < 18 && Math.abs(p.y - 60) < 20) {
+        collectCoin(1);
+      }
+      // Coin 2: Room 2 (Entrance Hall right balcony) x=215, y=74
+      if (r === 2 && !STATE.collectedCoins[2] && Math.abs(p.x - 215) < 18 && Math.abs(p.y - 88) < 20) {
+        collectCoin(2);
+      }
+      // Coin 3: Room 2 (Entrance Hall stairs) x=128, y=104
+      if (r === 2 && !STATE.collectedCoins[3] && Math.abs(p.x - 128) < 18 && Math.abs(p.y - 104) < 20) {
+        collectCoin(3);
+      }
+      // Coin 4: Room 3 (Moat right) x=222, y=105
+      if (r === 3 && !STATE.collectedCoins[4] && Math.abs(p.x - 222) < 18 && Math.abs(p.y - 128) < 20) {
+        collectCoin(4);
+      }
+    }
+
+    function collectCoin(idx) {
+      STATE.collectedCoins[idx] = true;
+      STATE.coins++;
+      sound.coin();
+      showSpeech('WELL DONE! FOUND COIN (' + STATE.coins + '/5)');
+    }
+
+    // --- 7. PLAYER PHYSICS & ROOM TRANSITIONS ---
+    function updatePlayer() {
+      if (STATE.dialog) return;
+
+      const p = STATE.player;
+      const keys = STATE.keys;
+
+      if (isClimbable(STATE.room, p.x, p.y)) {
+        if (keys['KeyW'] || keys['ArrowUp'] || keys['KeyQ'] || keys['btnJump']) {
+          p.isClimbing = true;
+          p.vy = -1.2;
+          p.y += p.vy;
+          return;
+        } else if (keys['KeyS'] || keys['ArrowDown'] || keys['KeyA'] || keys['btnDown']) {
+          p.isClimbing = true;
+          p.vy = 1.2;
+          p.y += p.vy;
+          return;
+        } else if (p.isClimbing) {
+          p.vy = 0;
+          return;
+        }
+      } else {
+        p.isClimbing = false;
+      }
+
+      const moveLeft = keys['KeyA'] || keys['ArrowLeft'] || keys['KeyO'] || keys['btnLeft'];
+      const moveRight = keys['KeyD'] || keys['ArrowRight'] || keys['KeyP'] || keys['btnRight'];
+
+      if (moveLeft && !moveRight) {
+        p.vx = -1.6;
+        p.facing = -1;
+        p.walkTimer++;
+        if (p.walkTimer > 4) {
+          p.walkFrame = (p.walkFrame + 1) % 4;
+          p.walkTimer = 0;
+        }
+      } else if (moveRight && !moveLeft) {
+        p.vx = 1.6;
+        p.facing = 1;
+        p.walkTimer++;
+        if (p.walkTimer > 4) {
+          p.walkFrame = (p.walkFrame + 1) % 4;
+          p.walkTimer = 0;
+        }
+      } else {
         p.vx = 0;
         p.walkFrame = 0;
       }
 
-      // Jump & Signature Somersault Roll
-      const jumpTrigger = (STATE.keys['Space'] || (upPressed && !onLadder));
-      if (jumpTrigger && p.onGround && !p.isRolling && !p.isClimbing) {
-        p.vy = -3.75;
-        p.onGround = false;
+      const wantJump = keys['KeyW'] || keys['ArrowUp'] || keys['KeyQ'] || keys['btnJump'];
+      if (wantJump && p.isGrounded && !p.isJumping) {
         p.isJumping = true;
-        sound.playJump();
+        p.isGrounded = false;
+        p.vy = -4.6;
+        p.isRolling = true;
+        p.rollAngle = 0;
+        sound.jump();
+      }
 
-        if (moveDir !== 0) {
-          p.isRolling = true;
+      p.vy += 0.28;
+      if (p.vy > 5) p.vy = 5;
+
+      p.x += p.vx;
+      p.y += p.vy;
+
+      if (p.isRolling) {
+        p.rollAngle += p.facing * 0.22;
+      }
+
+      const gy = getGroundY(STATE.room, p.x);
+      if (p.y >= gy) {
+        p.y = gy;
+        p.vy = 0;
+        if (!p.isGrounded) {
+          sound.land();
+          p.isGrounded = true;
+          p.isJumping = false;
+          p.isRolling = false;
           p.rollAngle = 0;
         }
-      }
-
-      // Apply Gravity (if not climbing)
-      if (!p.isClimbing) {
-        p.vy += 0.25;
-        if (p.vy > 4.5) p.vy = 4.5;
-      }
-
-      // Update Horizontal Movement
-      const nextX = p.x + p.vx;
-      const colX = checkCollision(nextX, p.y, p.width, p.height, STATE.currentRoom);
-      if (!colX.solid) {
-        p.x = nextX;
       } else {
-        p.vx = 0;
+        p.isGrounded = false;
       }
 
-      // Update Vertical Movement
-      const nextY = p.y + p.vy;
-      const colY = checkCollision(p.x, nextY, p.width, p.height, STATE.currentRoom);
-
-      // Check gator stepping stone platform in Room 3
-      const gatorY = checkAlligatorPlatform(p);
-
-      if (gatorY !== false) {
-        p.y = gatorY - p.height;
-        p.vy = 0;
-        p.onGround = true;
-        p.isJumping = false;
-        p.isClimbing = false;
-      } else if (!colY.solid) {
-        p.y = nextY;
-        if (!p.isClimbing) {
-          p.onGround = false;
-          if (p.vy > 0) p.fallDistance += p.vy;
-        }
-      } else {
-        if (p.vy > 0) {
-          p.y = Math.floor((nextY + p.height) / 8) * 8 - p.height;
-          p.onGround = true;
-          p.isJumping = false;
-          p.isClimbing = false;
-
-          // Extreme fall impact damage
-          if (p.fallDistance > 55) {
-            p.energy = Math.max(0, p.energy - 20);
-            p.isHurt = true;
-            p.hurtTimer = 40;
-            sound.playLand();
-            if (p.energy <= 0) killPlayer("FALLEN FROM A GREAT HEIGHT!");
-          } else if (p.fallDistance > 8) {
-            sound.playLand();
+      // Room Transitions
+      if (p.x < 10) {
+        if (STATE.room === 0) {
+          if (STATE.fireExtinguished) {
+            STATE.room = 1;
+            p.x = 236;
+            p.y = 140;
+          } else {
+            p.x = 10;
           }
-          p.fallDistance = 0;
-        } else if (p.vy < 0) {
-          p.vy = 0;
-        }
-      }
-
-      // Somersault Roll Rotation & Ground Stumble
-      if (p.isRolling) {
-        p.rollAngle = (p.rollAngle + p.facing * 18) % 360;
-        if (p.rollAngle < 0) p.rollAngle += 360;
-
-        if (p.onGround) {
-          p.x += p.facing * 0.8;
-          if (Math.abs(p.rollAngle) < 20 || Math.abs(p.rollAngle - 360) < 20) {
-            p.rollAngle = 0;
-            p.isRolling = false;
+        } else if (STATE.room === 2) {
+          STATE.room = 0;
+          p.x = 220;
+          p.y = 160;
+        } else if (STATE.room === 3) {
+          if (p.x <= 14 && STATE.coins >= 5) {
+            triggerVictory();
           }
         }
-      } else {
-        p.rollAngle = 0;
       }
 
-      // Room Boundary Transitions (Flip-Screen Navigation)
-      if (p.x < 2) {
-        if (STATE.currentRoom === 0 && !STATE.puzzles.fireLit) {
-          STATE.currentRoom = 1;
-          p.x = 236;
-          p.y = 106;
-          updateBorderColor();
-        } else if (STATE.currentRoom === 2) {
-          STATE.currentRoom = 0;
-          p.x = 236;
-          p.y = 106;
-          updateBorderColor();
-        } else if (STATE.currentRoom === 3) {
-          STATE.currentRoom = 2;
-          p.x = 236;
-          p.y = 106;
-          updateBorderColor();
-        } else {
-          p.x = 2;
-        }
-      } else if (p.x + p.width > 254) {
-        if (STATE.currentRoom === 1) {
-          STATE.currentRoom = 0;
-          p.x = 8;
-          p.y = 106;
-          updateBorderColor();
-        } else if (STATE.currentRoom === 0 && STATE.puzzles.trollBribed) {
-          STATE.currentRoom = 2;
-          p.x = 8;
-          p.y = 106;
-          updateBorderColor();
-        } else if (STATE.currentRoom === 2 && STATE.puzzles.portcullisRaised) {
-          STATE.currentRoom = 3;
-          p.x = 8;
-          p.y = 106;
-          updateBorderColor();
-        } else if (STATE.currentRoom === 3) {
-          checkVictoryCondition();
+      if (p.x > 238) {
+        if (STATE.room === 0) {
+          if (STATE.trollBribed) {
+            STATE.room = 2;
+            p.x = 18;
+            p.y = 168;
+          } else {
+            p.x = 238;
+          }
+        } else if (STATE.room === 1) {
+          STATE.room = 0;
+          p.x = 16;
+          p.y = 164;
+        } else if (STATE.room === 2) {
+          STATE.room = 3;
+          p.x = 220;
+          p.y = 140;
+        } else if (STATE.room === 3) {
           p.x = 238;
+        }
+      }
+
+      // Hazards
+      if (STATE.room === 0 && !STATE.fireExtinguished && p.x <= 36 && p.y >= 168) {
+        killPlayer("YOU WERE BURNT BY THE FLAMES!");
+      }
+      if (STATE.room === 1 && p.x <= 96 && p.y >= 174) {
+        killPlayer("YOU FELL IN THE WATER AND DROWNED!");
+      }
+      if (STATE.room === 3 && p.x >= 48 && p.x <= 165 && p.y >= 160) {
+        killPlayer("YOU FELL IN THE MOAT AND DROWNED!");
+      }
+      if (STATE.room === 3 && !STATE.gatorTied && p.x >= 96 && p.x <= 128 && p.y >= 134) {
+        killPlayer("THE GATOR HAS YOU FOR LUNCH!");
+      }
+
+      checkCoinPickup();
+    }
+
+    function killPlayer(msg) {
+      sound.death();
+      STATE.lives--;
+      STATE.player.hurtTimer = 30;
+      showDialog(msg, () => {
+        if (STATE.lives <= 0) {
+          showDialog("GAME OVER! DIZZY HAS LOST ALL LIVES.\n\nPRESS [R] TO RESTART THE ADVENTURE.");
         } else {
-          p.x = 254 - p.width;
-        }
-      }
-
-      // Check Hazards & Coins
-      checkHazards();
-      checkCoins();
-    }
-
-    function updateBorderColor() {
-      const frame = document.getElementById('crtFrame');
-      const colors = [ZX.WHITE, ZX.MAGENTA, ZX.CYAN, ZX.BLUE];
-      if (frame) frame.style.borderColor = colors[STATE.currentRoom];
-    }
-
-    function checkHazards() {
-      const p = STATE.player;
-      if (p.isDead) return;
-
-      // 1. Fireplace in Room 0
-      if (STATE.currentRoom === 0 && STATE.puzzles.fireLit) {
-        if (p.x < 36 && p.y > 100) {
-          killPlayer("BURNT BY THE ROARING FIRE!");
-          return;
-        }
-      }
-
-      // 2. Rat Bite in Room 0
-      if (STATE.currentRoom === 0 && !STATE.puzzles.ratFed) {
-        if (Math.abs((p.x + p.width / 2) - STATE.puzzles.ratX) < 10 && p.y > 114) {
-          if (!p.isHurt) {
-            p.energy = Math.max(0, p.energy - 15);
-            p.isHurt = true;
-            p.hurtTimer = 45;
-            sound.playBite();
-            if (p.energy <= 0) killPlayer("KILLED BY A VICIOUS RAT!");
-          }
-        }
-      }
-
-      // 3. Castle Moat Water in Room 3
-      if (STATE.currentRoom === 3 && p.y >= 124 && p.x > 86 && p.x < 178) {
-        killPlayer("DROWNED IN THE CASTLE MOAT!");
-        return;
-      }
-
-      // 4. Snap Happy Gator in Room 3
-      if (STATE.currentRoom === 3 && !STATE.puzzles.alligatorTied) {
-        if (p.x + p.width > 116 && p.x < 152 && p.y > 116) {
-          killPlayer("CHOMPED BY SNAP HAPPY GATOR!");
-          return;
-        }
-      }
-    }
-
-    function checkCoins() {
-      const p = STATE.player;
-      STATE.coins.forEach(c => {
-        if (!c.collected && c.room === STATE.currentRoom && !c.hiddenInRailing) {
-          if (
-            p.x + p.width > c.x - 4 &&
-            p.x < c.x + 12 &&
-            p.y + p.height > c.y - 4 &&
-            p.y < c.y + 12
-          ) {
-            c.collected = true;
-            STATE.coinsFound++;
-            sound.playCoin();
-
-            for (let i = 0; i < 14; i++) {
-              STATE.particles.push({
-                x: c.x + 4, y: c.y + 4,
-                vx: (Math.random() - 0.5) * 1.5, vy: (Math.random() - 0.5) * 1.5,
-                color: ZX.BRIGHT_YELLOW, life: 25
-              });
-            }
-          }
+          STATE.player.x = 90;
+          STATE.player.y = 164;
+          STATE.player.vx = 0;
+          STATE.player.vy = 0;
+          STATE.player.isRolling = false;
         }
       });
     }
 
-    function killPlayer(reason) {
-      const p = STATE.player;
-      p.isDead = true;
-      p.deathTimer = 75;
-      p.vx = 0;
-      p.vy = 0;
-      p.lives--;
-      sound.playDeath();
-
-      triggerDialog("ALAS, POOR DIZZY!", `${reason} You lose a life!`);
-    }
-
-    function respawnPlayer() {
-      const p = STATE.player;
-      if (p.lives <= 0) {
-        triggerDialog("GAME OVER", "You have run out of lives! Press R to restart your adventure.", () => {
-          resetGame();
-        });
-        return;
-      }
-
-      p.isDead = false;
-      p.isHurt = false;
-      p.energy = 100;
-      p.isRolling = false;
-      p.isClimbing = false;
-      p.rollAngle = 0;
-      p.vx = 0;
-      p.vy = 0;
-
-      if (STATE.currentRoom === 0) { p.x = 65; p.y = 106; }
-      else if (STATE.currentRoom === 1) { p.x = 220; p.y = 106; }
-      else if (STATE.currentRoom === 2) { p.x = 20; p.y = 106; }
-      else if (STATE.currentRoom === 3) { p.x = 20; p.y = 106; }
-    }
-
-    function checkVictoryCondition() {
-      if (STATE.coinsFound >= 5) {
-        STATE.puzzles.gameWon = true;
-        sound.playVictory();
-
-        triggerDialog(
-          "OLIVER TWINS",
-          "WELL DONE! You have solved all the puzzles, collected all 5 gold coins, and escaped the Castle Dungeons!",
-          () => {
-            // Victory screen
-          }
-        );
-      } else {
-        triggerDialog(
-          "CASTLE GATE",
-          `The castle boundary gate demands all 5 golden coins! You have only found ${STATE.coinsFound} of 5. Return and search the secret rooms!`
-        );
-      }
+    function triggerVictory() {
+      STATE.victory = true;
+      sound.fanfare();
+      showDialog("CONGRATULATIONS!\nDIZZY HAS ESCAPED THE CASTLE DUNGEON,\nCROSSED THE CASTLE MOAT,\nAND COLLECTED ALL 5 GOLD COINS!\n\nTHE OLIVER TWINS SALUTE YOU!");
     }
 
     function resetGame() {
-      STATE.player.x = 65;
-      STATE.player.y = 106;
-      STATE.player.energy = 100;
-      STATE.player.lives = 3;
-      STATE.player.inventory = ["A Fresh Green Apple", null];
-      STATE.player.activeSlot = 0;
-      STATE.player.isDead = false;
-      STATE.player.isHurt = false;
-      STATE.player.isClimbing = false;
-      STATE.currentRoom = 0;
-      STATE.coinsFound = 0;
-      STATE.coins.forEach(c => {
-        c.collected = false;
-        if (c.id === 3) c.hiddenInRailing = true;
-      });
-      STATE.groundItems = [
-        { name: "A Jug of Cold Water", room: 0, x: 50, y: 120 },
-        { name: "A Stale Loaf of Bread", room: 0, x: 136, y: 120 },
-        { name: "A Heavy Boulder", room: 1, x: 152, y: 112 },
-        { name: "A Piece of Rope", room: 2, x: 184, y: 120 }
-      ];
-      STATE.puzzles = {
-        trollBribed: false,
-        trollX: 216,
-        trollFacing: -1,
-        trollWalkingOff: false,
-        fireLit: true,
-        ratFed: false,
-        ratX: 110,
-        ratDir: 1,
-        ratEating: false,
-        ratEatTimer: 0,
-        portcullisRaised: false,
-        portcullisY: 96,
-        wallSwitchDown: false,
-        alligatorTied: false,
-        alligatorJawOpen: false,
-        alligatorJawTimer: 0,
-        gameWon: false
-      };
+      STATE.room = 0;
+      STATE.lives = 3;
+      STATE.coins = 0;
+      STATE.collectedCoins = [false, false, false, false, false];
+      STATE.inventory = ['apple', null];
+      STATE.activeSlot = 0;
       STATE.dialog = null;
-      STATE.particles = [];
-      updateBorderColor();
-      sound.playChime();
+      STATE.speechBubble = null;
+      STATE.victory = false;
+      STATE.fireExtinguished = false;
+      STATE.trollBribed = false;
+      STATE.ratFed = false;
+      STATE.portcullisRaised = false;
+      STATE.gatorTied = false;
+      STATE.player.x = 90;
+      STATE.player.y = 164;
+      STATE.player.vx = 0;
+      STATE.player.vy = 0;
+      STATE.player.facing = 1;
+      STATE.player.isRolling = false;
+      updateHud();
+      showSpeech("GOSH! I'M TRAPPED\nIN THE CASTLE DUNGEON!");
     }
 
-    // --- 10. NPC ANIMATIONS & PARTICLES ---
-    function updateEntities() {
-      // 1. Troll Guard
-      if (STATE.puzzles.trollWalkingOff) {
-        STATE.puzzles.trollFacing = 1;
-        STATE.puzzles.trollX += 0.8;
-        if (STATE.puzzles.trollX > 260) {
-          STATE.puzzles.trollWalkingOff = false;
-        }
-      }
-
-      // 2. Hungry Rat
-      if (!STATE.puzzles.ratFed) {
-        STATE.puzzles.ratX += STATE.puzzles.ratDir * 0.7;
-        if (STATE.puzzles.ratX > 175) STATE.puzzles.ratDir = -1;
-        if (STATE.puzzles.ratX < 50) STATE.puzzles.ratDir = 1;
-      }
-
-      // 3. Snap Happy Gator
-      STATE.puzzles.alligatorJawTimer++;
-      if (STATE.puzzles.alligatorJawTimer > 25) {
-        STATE.puzzles.alligatorJawTimer = 0;
-        STATE.puzzles.alligatorJawOpen = !STATE.puzzles.alligatorJawOpen;
-      }
-
-      // 4. Update Particles
-      for (let i = STATE.particles.length - 1; i >= 0; i--) {
-        const pt = STATE.particles[i];
-        pt.x += pt.vx;
-        pt.y += pt.vy;
-        pt.life--;
-        if (pt.life <= 0) STATE.particles.splice(i, 1);
-      }
-
-      // 5. Update Typewriter Dialog
-      if (STATE.dialog && STATE.dialog.progress < STATE.dialog.text.length) {
-        STATE.dialog.progress += 2;
-        if (STATE.dialog.progress % 4 === 0) sound.playBlip();
-      }
-    }
-
-    // --- 11. MAIN GAME RENDER & LOOP ---
+    // --- 8. RENDERING ENGINE ---
     function render() {
-      bctx.fillStyle = ZX.BLACK;
-      bctx.fillRect(0, 0, 256, 192);
-
-      // 1. Draw Room Background & Scenery (y: 0 - 143)
-      drawRoomScenery(bctx, STATE.currentRoom);
-
-      // 2. Room Title Header Banner
-      bctx.fillStyle = ZX.BLACK;
-      bctx.fillRect(0, 3, 256, 12);
-      bctx.fillStyle = ZX.CYAN;
-      bctx.fillRect(0, 15, 256, 1);
-      const title = ROOM_NAMES[STATE.currentRoom];
-      const titleX = Math.floor((256 - title.length * 8) / 2);
-      drawText(bctx, title, titleX, 5, ZX.BRIGHT_YELLOW);
-
-      // 3. Draw Ground Items
-      STATE.groundItems.forEach(it => {
-        if (it.room === STATE.currentRoom) {
-          drawItem(bctx, it.name, it.x, it.y);
-        }
-      });
-
-      // 4. Draw Coins
-      STATE.coins.forEach(c => {
-        if (!c.collected && c.room === STATE.currentRoom && !c.hiddenInRailing) {
-          drawCoin(bctx, c.x, c.y);
-        }
-      });
-
-      // 5. Draw NPCs
-      if (STATE.currentRoom === 0) {
-        if (STATE.puzzles.trollX < 260) {
-          drawTroll(bctx, STATE.puzzles.trollX, 114, STATE.puzzles.trollFacing);
-        }
-        if (!STATE.puzzles.ratFed) {
-          drawRat(bctx, STATE.puzzles.ratX, 126, STATE.puzzles.ratDir, STATE.puzzles.ratEating);
-        }
-      } else if (STATE.currentRoom === 3) {
-        drawAlligator(bctx, 134, 126, STATE.puzzles.alligatorTied, STATE.puzzles.alligatorJawOpen);
+      const roomKeys = ['room_dungeon', 'room_behind_fireplace', 'room_entrance_hall', 'room_moat'];
+      const bgImg = IMAGES[roomKeys[STATE.room]];
+      if (bgImg && bgImg.complete) {
+        ctx.drawImage(bgImg, 0, 0, 256, 192);
+      } else {
+        ctx.fillStyle = '#000000';
+        ctx.fillRect(0, 0, 256, 192);
       }
 
-      // 6. Draw Dizzy Player
-      drawDizzy(bctx, STATE.player);
+      renderRoomObjects();
+      renderPlayer();
+      renderHeaderHUD();
 
-      // 7. Draw Particles
-      STATE.particles.forEach(pt => {
-        bctx.fillStyle = pt.color;
-        bctx.fillRect(Math.floor(pt.x), Math.floor(pt.y), 2, 2);
-      });
+      if (STATE.speechBubble && STATE.speechTimer > 0) {
+        renderSpeechBubble();
+        STATE.speechTimer--;
+      }
 
-      // 8. Draw ZX Spectrum HUD (y: 144 - 191)
-      drawHUD(bctx);
-
-      // 9. Draw Dialog Window if open
       if (STATE.dialog) {
-        drawDialogBox(bctx);
-      }
-
-      // 10. Draw Grand Victory Overlay if Won!
-      if (STATE.puzzles.gameWon) {
-        drawVictoryBanner(bctx);
-      }
-
-      // 11. Blit Offscreen Canvas to Main Canvas (Crisp Integer Scaling)
-      ctx.drawImage(offscreen, 0, 0);
-    }
-
-    function drawVictoryBanner(ctx) {
-      ctx.fillStyle = ZX.BLACK;
-      ctx.fillRect(12, 20, 232, 104);
-      ctx.fillStyle = ZX.BRIGHT_YELLOW;
-      ctx.strokeRect(12.5, 20.5, 231, 103);
-      ctx.strokeRect(14.5, 22.5, 227, 99);
-
-      drawText(ctx, "* * * WELL DONE! * * *", 40, 28, ZX.BRIGHT_YELLOW);
-      drawText(ctx, "YOU ESCAPED THE CASTLE!", 36, 42, ZX.BRIGHT_WHITE);
-      drawText(ctx, "ALL 5 COINS COLLECTED!", 40, 54, ZX.BRIGHT_CYAN);
-
-      drawText(ctx, "FANTASY WORLD DIZZY", 52, 70, ZX.BRIGHT_GREEN);
-      drawText(ctx, "CODE BY THE OLIVER TWINS", 28, 82, ZX.WHITE);
-
-      if (Math.floor(Date.now() / 300) % 2 === 0) {
-        drawText(ctx, "[R] PLAY AGAIN", 72, 104, ZX.BRIGHT_YELLOW);
+        renderDialogBox();
       }
     }
 
+    function renderRoomObjects() {
+      STATE.flameAnim = (STATE.flameAnim + 0.15) % 2;
+
+      // ROOM 0 (Dungeon)
+      if (STATE.room === 0) {
+        if (STATE.fireExtinguished) {
+          ctx.fillStyle = '#000000';
+          ctx.fillRect(8, 146, 28, 20);
+          ctx.fillStyle = '#005555';
+          ctx.fillRect(8, 164, 28, 4);
+        }
+
+        if (hasItemOrUsed('jug')) {
+          ctx.fillStyle = '#000000';
+          ctx.fillRect(142, 146, 16, 12);
+          ctx.fillStyle = '#cc0000';
+          ctx.fillRect(142, 158, 16, 2);
+        }
+        if (hasItemOrUsed('bread')) {
+          ctx.fillStyle = '#000000';
+          ctx.fillRect(158, 148, 16, 10);
+          ctx.fillStyle = '#cc0000';
+          ctx.fillRect(158, 158, 16, 2);
+        }
+
+        if (STATE.trollBribed) {
+          ctx.fillStyle = '#000000';
+          ctx.fillRect(180, 134, 32, 34);
+        }
+
+        if (STATE.collectedCoins[0]) {
+          ctx.fillStyle = '#000000';
+          ctx.fillRect(188, 150, 18, 18);
+        }
+
+        if (!STATE.ratFed) {
+          STATE.ratX += STATE.ratDir * 0.4;
+          if (STATE.ratX > 140) STATE.ratDir = -1;
+          if (STATE.ratX < 80) STATE.ratDir = 1;
+          const rImg = IMAGES['rat'];
+          if (rImg && rImg.complete) {
+            ctx.save();
+            if (STATE.ratDir > 0) {
+              ctx.translate(STATE.ratX + 16, 92);
+              ctx.scale(-1, 1);
+              ctx.drawImage(rImg, 0, 0);
+            } else {
+              ctx.drawImage(rImg, STATE.ratX, 92);
+            }
+            ctx.restore();
+          }
+        }
+      }
+
+      // ROOM 1 (Behind Fireplace)
+      if (STATE.room === 1) {
+        if (!STATE.collectedCoins[1]) {
+          const cImg = IMAGES['coin'];
+          if (cImg && cImg.complete) ctx.drawImage(cImg, 24, 46);
+        }
+      }
+
+      // ROOM 2 (Entrance Hall)
+      if (STATE.room === 2) {
+        const swImg = IMAGES[STATE.portcullisRaised ? 'switch_dn' : 'switch_up'];
+        if (swImg && swImg.complete) ctx.drawImage(swImg, 32, 74);
+
+        if (!hasItemOrUsed('rope')) {
+          const rpImg = IMAGES['rope'];
+          if (rpImg && rpImg.complete) ctx.drawImage(rpImg, 126, 78);
+        }
+
+        if (STATE.collectedCoins[2]) {
+          ctx.fillStyle = '#000000';
+          ctx.fillRect(206, 66, 20, 20);
+        }
+
+        if (!STATE.collectedCoins[3]) {
+          const cImg = IMAGES['coin'];
+          if (cImg && cImg.complete) ctx.drawImage(cImg, 120, 96);
+        }
+      }
+
+      // ROOM 3 (Moat & Portcullis)
+      if (STATE.room === 3) {
+        if (STATE.portcullisRaised) {
+          ctx.fillStyle = '#000000';
+          ctx.fillRect(167, 56, 10, 56);
+        }
+
+        const gImg = IMAGES['gator'];
+        if (gImg && gImg.complete) {
+          STATE.gatorTimer += 0.05;
+          const gBob = Math.sin(STATE.gatorTimer) * 2;
+          ctx.drawImage(gImg, 108, 128 + gBob);
+          if (STATE.gatorTied) {
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(112, 132 + gBob, 10, 3);
+          }
+        }
+
+        if (STATE.collectedCoins[4]) {
+          ctx.fillStyle = '#000000';
+          ctx.fillRect(216, 98, 18, 18);
+        }
+      }
+    }
+
+    function renderPlayer() {
+      const p = STATE.player;
+      ctx.save();
+      ctx.translate(Math.round(p.x), Math.round(p.y));
+
+      if (p.isRolling) {
+        ctx.rotate(p.rollAngle);
+      }
+
+      if (p.facing < 0 && !p.isRolling) {
+        ctx.scale(-1, 1);
+      }
+
+      let pImg = IMAGES['dizzy_idle'];
+      if (p.vx !== 0 && p.isGrounded) {
+        pImg = IMAGES['dizzy_walk_' + p.walkFrame] || IMAGES['dizzy_idle'];
+      }
+
+      if (pImg && pImg.complete) {
+        ctx.drawImage(pImg, -12, -20);
+      }
+
+      ctx.restore();
+    }
+
+    function renderHeaderHUD() {
+      // 1. Draw Lives in Left Recess (x=48..88, y=14..24)
+      const eggImg = IMAGES['egg_life'];
+      if (eggImg && eggImg.complete) {
+        for (let i = 0; i < STATE.lives; i++) {
+          ctx.drawImage(eggImg, 52 + i * 11, 15);
+        }
+      }
+
+      // 2. Draw Coin Counter in Right Recess (x=168..208, y=14..24)
+      const coinStr = '0' + Math.min(9, STATE.coins);
+      drawZxText(ctx, coinStr, 180, 15, '#ffff00');
+    }
+
+    function renderSpeechBubble() {
+      const p = STATE.player;
+      const text = STATE.speechBubble;
+      const lines = text.split('\n');
+      const maxLen = Math.max(...lines.map(l => l.length));
+      const w = Math.min(232, maxLen * 8 + 8);
+      const h = lines.length * 9 + 4;
+      let bx = Math.max(12, Math.min(244 - w, Math.round(p.x - w / 2)));
+      let by = Math.max(52, Math.round(p.y - 26 - h));
+
+      ctx.fillStyle = '#000000';
+      ctx.fillRect(bx, by, w, h);
+      ctx.strokeStyle = '#00ffff';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(bx, by, w, h);
+
+      lines.forEach((line, idx) => {
+        const lx = bx + Math.floor((w - line.length * 8) / 2);
+        drawZxText(ctx, line, lx, by + 3 + idx * 9, '#00ffff');
+      });
+    }
+
+    function renderDialogBox() {
+      const d = STATE.dialog;
+      if (!d) return;
+
+      if (d.charIdx < d.fullText.length) {
+        d.charIdx += 2;
+        d.currentText = d.fullText.slice(0, d.charIdx);
+        if (Math.random() < 0.4) sound.dialogBlip();
+      }
+
+      ctx.fillStyle = '#000000';
+      ctx.strokeStyle = '#ffff00';
+      ctx.lineWidth = 2;
+      ctx.fillRect(16, 52, 224, 86);
+      ctx.strokeRect(16, 52, 224, 86);
+
+      const lines = d.currentText.split('\n');
+      lines.forEach((line, idx) => {
+        const lx = 128 - (line.length * 8) / 2;
+        drawZxText(ctx, line, lx, 60 + idx * 10, '#ffffff');
+      });
+
+      if (d.charIdx >= d.fullText.length) {
+        const prompt = '[ PRESS SPACE OR ENTER ]';
+        const px = 128 - (prompt.length * 8) / 2;
+        drawZxText(ctx, prompt, px, 126, '#00ffff');
+      }
+    }
+
+    // --- 9. GAME LOOP ---
     function gameLoop() {
-      updateEntities();
-      if (!STATE.dialog) {
-        updatePlayer();
-      }
+      updatePlayer();
       render();
       requestAnimationFrame(gameLoop);
     }
 
-    // --- 12. INPUT HANDLERS (KEYBOARD & TOUCH) ---
+    // --- 10. INPUT HANDLING & EVENT BINDINGS ---
     window.addEventListener('keydown', (e) => {
       sound.ensure();
       STATE.keys[e.code] = true;
 
-      if (e.code === 'KeyU' || e.code === 'Enter') {
+      if (e.code === 'Space' || e.code === 'Enter') {
+        e.preventDefault();
         if (STATE.dialog) {
           advanceDialog();
         } else {
@@ -2187,22 +1252,21 @@
         }
       }
 
-      if (e.code === 'KeyP') {
-        if (!STATE.dialog) {
-          pickUpOrDrop();
-        }
+      if (e.code === 'KeyE' || e.code === 'KeyG') {
+        e.preventDefault();
+        if (!STATE.dialog) pickUpOrDrop();
       }
 
-      // Item Slot Selection (1 or 2)
-      if (e.code === 'Digit1') STATE.player.activeSlot = 0;
-      if (e.code === 'Digit2') STATE.player.activeSlot = 1;
+      if (e.code === 'Tab' || e.code === 'Digit1' || e.code === 'Digit2') {
+        e.preventDefault();
+        STATE.activeSlot = (STATE.activeSlot === 0) ? 1 : 0;
+        updateHud();
+      }
 
-      // Toggle Mute (M)
       if (e.code === 'KeyM') {
         sound.toggleMute();
       }
 
-      // Restart (R)
       if (e.code === 'KeyR') {
         resetGame();
       }
@@ -2212,12 +1276,11 @@
       STATE.keys[e.code] = false;
     });
 
-    // Touch & On-Screen Button Binding
-    function bindTouchBtn(btnId, keyName) {
-      const el = document.getElementById(btnId);
+    function bindBtn(id, code) {
+      const el = document.getElementById(id);
       if (!el) return;
-      const start = (e) => { e.preventDefault(); sound.ensure(); STATE.keys[keyName] = true; };
-      const end = (e) => { e.preventDefault(); STATE.keys[keyName] = false; };
+      const start = (e) => { e.preventDefault(); sound.ensure(); STATE.keys[code] = true; };
+      const end = (e) => { e.preventDefault(); STATE.keys[code] = false; };
       el.addEventListener('mousedown', start);
       el.addEventListener('mouseup', end);
       el.addEventListener('mouseleave', end);
@@ -2225,46 +1288,51 @@
       el.addEventListener('touchend', end, { passive: false });
     }
 
-    bindTouchBtn('btnTouchLeft', 'btnLeft');
-    bindTouchBtn('btnTouchRight', 'btnRight');
-    bindTouchBtn('btnTouchJump', 'btnJump');
-    bindTouchBtn('btnTouchDown', 'btnDown');
+    bindBtn('btnLeft', 'ArrowLeft');
+    bindBtn('btnRight', 'ArrowRight');
+    bindBtn('btnJump', 'ArrowUp');
+    bindBtn('btnDown', 'ArrowDown');
 
-    const btnTouchUse = document.getElementById('btnTouchUse');
-    if (btnTouchUse) {
-      btnTouchUse.addEventListener('click', () => {
-        sound.ensure();
-        if (STATE.dialog) advanceDialog();
-        else performAction();
-      });
+    document.getElementById('btnUse')?.addEventListener('click', () => {
+      sound.ensure();
+      if (STATE.dialog) advanceDialog();
+      else performAction();
+    });
+
+    document.getElementById('btnPick')?.addEventListener('click', () => {
+      sound.ensure();
+      if (!STATE.dialog) pickUpOrDrop();
+    });
+
+    document.getElementById('btnSlot')?.addEventListener('click', () => {
+      sound.ensure();
+      STATE.activeSlot = (STATE.activeSlot === 0) ? 1 : 0;
+      updateHud();
+    });
+
+    document.getElementById('btnMute')?.addEventListener('click', () => {
+      sound.toggleMute();
+    });
+
+    document.getElementById('btnRestart')?.addEventListener('click', () => {
+      resetGame();
+    });
+
+    // Wait for all images to decode, then start game
+    async function init() {
+      await Promise.all(Object.values(IMAGES).map(img => {
+        if (img.complete) return Promise.resolve();
+        return new Promise(res => {
+          img.onload = () => res();
+          img.onerror = () => res();
+        });
+      }));
+      updateHud();
+      showSpeech("GOSH! I'M TRAPPED\nIN THE CASTLE DUNGEON!");
+      requestAnimationFrame(gameLoop);
     }
 
-    const btnTouchPick = document.getElementById('btnTouchPick');
-    if (btnTouchPick) {
-      btnTouchPick.addEventListener('click', () => {
-        sound.ensure();
-        if (!STATE.dialog) pickUpOrDrop();
-      });
-    }
-
-    const btnTouchSlot = document.getElementById('btnTouchSlot');
-    if (btnTouchSlot) {
-      btnTouchSlot.addEventListener('click', () => {
-        sound.ensure();
-        STATE.player.activeSlot = (STATE.player.activeSlot === 0) ? 1 : 0;
-      });
-    }
-
-    const btnTouchRestart = document.getElementById('btnTouchRestart');
-    if (btnTouchRestart) {
-      btnTouchRestart.addEventListener('click', () => {
-        resetGame();
-      });
-    }
-
-    // Start Game Loop
-    updateBorderColor();
-    requestAnimationFrame(gameLoop);
+    init();
   </script>
 </body>
 </html>
