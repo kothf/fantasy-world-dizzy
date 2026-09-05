@@ -362,7 +362,7 @@
 
     function wrapZxLines(text, maxChars = 24) {
       const lines = [];
-      const paras = String(text).split('\n');
+      const paras = String(text).replace(/\\n/g, '\n').split('\n');
       for (const para of paras) {
         if (!para.trim()) {
           lines.push('');
@@ -561,7 +561,7 @@
         if (x <= 184 && curY <= 100) return 96;
         // Bunk bed shelves (one-way platforms when falling)
         if (x >= 60 && x <= 126 && isFalling) {
-          if (curY <= 128) return 124;
+          if (curY <= 130) return 128;
           if (curY <= 156) return 152;
         }
         // Table (one-way platform when falling)
@@ -569,8 +569,8 @@
         return 176;
       }
       if (room === 1) {
-        // Upper cavern ledge
-        if (x <= 150 && curY <= 64) return 60;
+        // Upper cavern ledge (reliable one-way platform)
+        if (x <= 152 && (curY <= 68 || (isFalling && curY <= 72))) return 60;
         // Stepped rocks
         if (x >= 96 && x < 112) return 144;
         if (x >= 112 && x < 136) return 152;
@@ -578,9 +578,9 @@
         return 176;
       }
       if (room === 2) {
-        // Overhead balconies (only if already on or above them)
-        if (x <= 72 && curY <= 90) return 88;
-        if (x >= 184 && curY <= 90) return 88;
+        // Overhead balconies (reliable one-way platforms when descending)
+        if (x <= 72 && (curY <= 96 || (isFalling && curY <= 106))) return 88;
+        if (x >= 184 && (curY <= 96 || (isFalling && curY <= 106))) return 88;
         // Grand Symmetrical Staircase
         if (x >= 88 && x <= 168) return 104; // Center top landing
         if ((x >= 72 && x < 88) || (x > 168 && x <= 184)) return 120; // Step 3
@@ -599,8 +599,8 @@
 
     function isClimbable(room, x, y) {
       if (room === 1) {
-        // Cavern ladder connecting rock base to upper ledge
-        return (x >= 140 && x <= 156 && y >= 58 && y <= 164);
+        // Cavern ladder connecting rock base (y=144) to upper ledge (y=60)
+        return (x >= 140 && x <= 160 && y >= 56 && y <= 150);
       }
       return false;
     }
@@ -794,21 +794,21 @@
 
       // ROOM 3 (Moat & Portcullis)
       if (room === 3) {
-        if (!STATE.gatorTied && p.x >= 70 && p.x <= 130 && p.y <= 140) {
+        if (!STATE.gatorTied && p.x >= 75 && p.x <= 145 && p.y <= 144) {
           if (curItem === 'rope' || hasItem('rope')) {
             STATE.gatorTied = true;
             removeItem('rope');
             sound.coin();
-            showDialog("YOU NIMBLY TIE THE ROPE\nAROUND THE GATOR'S SNOUT!\n\nIT CAN NO LONGER BITE!\nYOU CAN SAFELY USE IT\nAS A STEPPING STONE!");
+            showDialog("YOU NIMBLY TIE THE ROPE\\nAROUND THE GATOR\'S SNOUT!\\n\\nIT CAN NO LONGER BITE!\\nYOU CAN SAFELY USE IT\\nAS A STEPPING STONE!");
             return;
           } else {
-            showDialog("A SNAP-HAPPY GATOR GUARDS\nTHE CASTLE MOAT!\nYOU NEED TO TIE ITS JAWS!");
+            showDialog("A SNAP-HAPPY GATOR GUARDS\\nTHE CASTLE MOAT!\\nYOU NEED TO TIE ITS JAWS\\nBEFORE YOU CAN CROSS!");
             return;
           }
         }
 
         if (!STATE.portcullisRaised && p.x > 160) {
-          showDialog("THE HEAVY PORTCULLIS\nBARS THE EXIT!\nFIND A LEVER INSIDE THE\nCASTLE TO OPEN IT!");
+          showDialog("THE HEAVY PORTCULLIS\\nBARS THE EXIT!\\nFIND A LEVER INSIDE THE\\nCASTLE TO OPEN IT!");
           return;
         }
       }
@@ -870,11 +870,17 @@
         if (moveLeft && !moveRight) {
           p.x -= 1.2;
           p.facing = -1;
-          if (p.x < 140) p.isClimbing = false;
+          if (p.x < 140) {
+            p.isClimbing = false;
+            if (p.y <= 68) {
+              p.y = 60;
+              p.isGrounded = true;
+            }
+          }
         } else if (moveRight && !moveLeft) {
           p.x += 1.2;
           p.facing = 1;
-          if (p.x > 156) p.isClimbing = false;
+          if (p.x > 160) p.isClimbing = false;
         }
 
         if (p.isClimbing) return;
@@ -955,10 +961,10 @@
         }
       }
 
-      // Room 0: Solid brick ceiling bump (above cell x <= 184)
+      // Room 0: Solid brick ceiling bump (under arch at y=96)
       if (STATE.room === 0 && p.vy < 0 && p.x <= 184) {
-        if (p.y - 20 <= 112 && oldY - 20 > 110) {
-          p.y = 132;
+        if (p.y - 20 <= 96 && oldY - 20 > 92) {
+          p.y = 117;
           p.vy = 0.5; // Bumps head and falls
         }
       }
@@ -1000,29 +1006,41 @@
       p.x = Math.max(8, Math.min(248, p.x));
 
       // 7. Room Transitions
+      function changeRoom(newRoom, newX, newY, newFacing) {
+        STATE.room = newRoom;
+        p.x = newX;
+        p.y = newY;
+        p.vx = 0;
+        p.vy = 0;
+        p.facing = newFacing;
+        p.isGrounded = true;
+        p.isJumping = false;
+        p.isRolling = false;
+        p.rollAngle = 0;
+        p.isClimbing = false;
+        p.walkFrame = 0;
+        p.walkTimer = 0;
+      }
+
       if (p.x <= 10) {
         if (STATE.room === 0) {
           if (STATE.fireExtinguished) {
-            STATE.room = 1;
-            p.x = 232;
-            p.y = 176;
-            p.vx = 0;
+            changeRoom(1, 220, 176, -1);
           } else {
-            p.x = 10;
+            p.x = 12;
+            p.vx = 0;
           }
         } else if (STATE.room === 2) {
-          // Return to Dungeon
-          STATE.room = 0;
-          p.x = 224;
-          p.y = 176;
-          p.vx = 0;
+          // Return to Dungeon from Entrance Hall
+          changeRoom(0, 220, 176, -1);
         } else if (STATE.room === 3) {
           // Freedom exit
           if (STATE.coins >= 5) {
             triggerVictory();
           } else {
-            showSpeech('NEED ALL 5 COINS!\n(' + STATE.coins + '/5 COLLECTED)');
-            p.x = 14;
+            showSpeech('NEED ALL 5 COINS!\\n(' + STATE.coins + '/5 COLLECTED)');
+            p.x = 16;
+            p.vx = 0;
           }
         }
       }
@@ -1030,50 +1048,39 @@
       if (p.x >= 238) {
         if (STATE.room === 0) {
           if (STATE.trollBribed) {
-            STATE.room = 2;
-            p.x = 18;
-            p.y = 168;
-            p.vx = 0;
+            changeRoom(2, 24, 168, 1);
           } else {
-            p.x = 238;
+            p.x = 236;
+            p.vx = 0;
           }
         } else if (STATE.room === 1) {
           // Return to Dungeon through fireplace
-          STATE.room = 0;
-          p.x = 24;
-          p.y = 176;
-          p.vx = 0;
+          changeRoom(0, 24, 176, 1);
         } else if (STATE.room === 2) {
-          // Enter Moat from Castle
-          STATE.room = 3;
-          p.x = 224;
-          p.y = 160;
-          p.vx = 0;
+          // Enter Moat from Castle Entrance Hall
+          changeRoom(3, 220, 160, -1);
         } else if (STATE.room === 3) {
-          // Return to Castle from Moat
-          STATE.room = 2;
-          p.x = 224;
-          p.y = 168;
-          p.vx = 0;
+          // Return to Castle Entrance Hall from Moat
+          changeRoom(2, 220, 168, -1);
         }
       }
 
       // 8. Hazards
       // Room 0: Roaring flames
       if (STATE.room === 0 && !STATE.fireExtinguished && p.x <= 36 && p.y >= 160) {
-        killPlayer("YOU WERE BURNT\nBY THE ROARING FLAMES!");
+        killPlayer("YOU WERE BURNT\\nBY THE ROARING FLAMES!");
       }
       // Room 1: Deep water
       if (STATE.room === 1 && p.x <= 96 && p.y >= 164) {
-        killPlayer("YOU FELL IN THE WATER\nAND DROWNED!");
+        killPlayer("YOU FELL IN THE WATER\\nAND DROWNED!");
       }
       // Room 3: Moat water
-      if (STATE.room === 3 && p.x >= 48 && p.x <= 168 && p.y >= 148) {
-        killPlayer("YOU FELL IN THE MOAT\nAND DROWNED!");
+      if (STATE.room === 3 && p.x >= 48 && p.x <= 168 && p.y >= 152) {
+        killPlayer("YOU FELL IN THE MOAT\\nAND DROWNED!");
       }
       // Room 3: Snap-happy alligator
-      if (STATE.room === 3 && !STATE.gatorTied && p.x >= 92 && p.x <= 126 && p.y <= 140) {
-        killPlayer("THE GATOR HAS YOU\nFOR LUNCH!");
+      if (STATE.room === 3 && !STATE.gatorTied && p.x >= 102 && p.x <= 118 && p.y <= 142) {
+        killPlayer("THE GATOR HAS YOU\\nFOR LUNCH!");
       }
 
       checkCoinPickup();
@@ -1085,26 +1092,31 @@
       STATE.player.hurtTimer = 30;
       showDialog(msg, () => {
         if (STATE.lives <= 0) {
-          showDialog("GAME OVER!\nDIZZY HAS LOST ALL LIVES.\n\nPRESS [R] TO RESTART\nTHE ADVENTURE.");
+          showDialog("GAME OVER!\\nDIZZY HAS LOST ALL LIVES.\\n\\nPRESS [R] TO RESTART\\nTHE ADVENTURE.");
         } else {
           // Safe respawn in current room
           if (STATE.room === 0) {
             STATE.player.x = 90;
             STATE.player.y = 176;
+            STATE.player.facing = 1;
           } else if (STATE.room === 1) {
             STATE.player.x = 220;
             STATE.player.y = 176;
+            STATE.player.facing = -1;
           } else if (STATE.room === 2) {
             STATE.player.x = 128;
             STATE.player.y = 104;
+            STATE.player.facing = 1;
           } else if (STATE.room === 3) {
-            STATE.player.x = 224;
+            STATE.player.x = 220;
             STATE.player.y = 160;
+            STATE.player.facing = -1;
           }
           STATE.player.vx = 0;
           STATE.player.vy = 0;
           STATE.player.isRolling = false;
           STATE.player.isJumping = false;
+          STATE.player.isClimbing = false;
           STATE.player.isGrounded = true;
           STATE.player.rollAngle = 0;
           updateHud();
@@ -1214,6 +1226,17 @@
             }
             ctx.restore();
           }
+        }
+      }
+
+      // ROOM 1 (Behind Fireplace)
+      if (STATE.room === 1) {
+        // Authentic ZX Spectrum ladder connecting rocks to upper cavern ledge
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(145, 58, 2, 88);
+        ctx.fillRect(155, 58, 2, 88);
+        for (let ly = 64; ly <= 140; ly += 8) {
+          ctx.fillRect(147, ly, 8, 2);
         }
       }
 
@@ -1470,7 +1493,8 @@
         });
       }));
       updateHud();
-      showSpeech("GOSH! I'M TRAPPED\nIN THE CASTLE DUNGEON!");
+      render();
+      showSpeech("GOSH! I'M TRAPPED\\nIN THE CASTLE DUNGEON!");
       requestAnimationFrame(gameLoop);
     }
 
